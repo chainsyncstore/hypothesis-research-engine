@@ -1,0 +1,188 @@
+"""
+Market data loader for OHLCV time-series data.
+
+Loads historical market data from CSV files and validates chronological ordering.
+No transformations or indicators are applied - raw data only.
+"""
+
+from datetime import datetime
+from pathlib import Path
+from typing import List
+
+import pandas as pd
+
+from data.schemas import Bar
+
+
+class MarketDataLoader:
+    """
+    Loads OHLCV market data from CSV files.
+    
+    Expected CSV format:
+    - timestamp (ISO format or parseable date string)
+    - open (float)
+    - high (float)
+    - low (float)
+    - close (float)
+    - volume (float)
+    """
+    
+    @staticmethod
+    def load_from_csv(file_path: str | Path, symbol: str | None = None) -> List[Bar]:
+        """
+        Load market data from a CSV file.
+        
+        Args:
+            file_path: Path to CSV file
+            symbol: Optional symbol/ticker to attach to bars
+            
+        Returns:
+            List of validated Bar objects in chronological order
+            
+        Raises:
+            FileNotFoundError: If file doesn't exist
+            ValueError: If data is invalid or not chronologically ordered
+        """
+        file_path = Path(file_path)
+        
+        if not file_path.exists():
+            raise FileNotFoundError(f"Market data file not found: {file_path}")
+        
+        # Load CSV
+        df = pd.read_csv(file_path)
+        
+        # Validate required columns
+        required_cols = {'timestamp', 'open', 'high', 'low', 'close', 'volume'}
+        missing_cols = required_cols - set(df.columns)
+        
+        if missing_cols:
+            raise ValueError(
+                f"Missing required columns in CSV: {missing_cols}. "
+                f"Found columns: {list(df.columns)}"
+            )
+        
+        # Parse timestamps
+        df['timestamp'] = pd.to_datetime(df['timestamp'])
+        
+        # Sort by timestamp to ensure chronological order
+        df = df.sort_values('timestamp').reset_index(drop=True)
+        
+        # Check for duplicates
+        duplicate_count = df['timestamp'].duplicated().sum()
+        if duplicate_count > 0:
+            raise ValueError(
+                f"Found {duplicate_count} duplicate timestamps in data. "
+                "Each bar must have a unique timestamp."
+            )
+        
+        # Convert to Bar objects
+        bars: List[Bar] = []
+        
+        for idx, row in df.iterrows():
+            try:
+                bar = Bar(
+                    timestamp=row['timestamp'].to_pydatetime(),
+                    open=float(row['open']),
+                    high=float(row['high']),
+                    low=float(row['low']),
+                    close=float(row['close']),
+                    volume=float(row['volume']),
+                    symbol=symbol
+                )
+                bars.append(bar)
+            except Exception as e:
+                raise ValueError(
+                    f"Invalid bar data at row {idx}: {e}"
+                ) from e
+        
+        # Validate chronological ordering (should already be sorted, but double-check)
+        for i in range(1, len(bars)):
+            if bars[i].timestamp <= bars[i-1].timestamp:
+                raise ValueError(
+                    f"Data is not in chronological order at index {i}: "
+                    f"{bars[i-1].timestamp} -> {bars[i].timestamp}"
+                )
+        
+        if not bars:
+            raise ValueError("No valid bars found in CSV file")
+        
+        return bars
+    
+    @staticmethod
+    def create_synthetic_data(
+        symbol: str,
+        start_date: datetime,
+        num_bars: int,
+        initial_price: float = 100.0,
+        volatility: float = 0.02,
+        trend: float = 0.0001,
+        seed: int = 42
+    ) -> List[Bar]:
+        """
+        Create synthetic market data for testing.
+        
+        Args:
+            symbol: Symbol/ticker
+            start_date: Start date for data
+            num_bars: Number of bars to generate
+            initial_price: Starting price
+            volatility: Daily volatility (std dev of returns)
+            trend: Daily trend (mean return)
+            seed: Random seed for reproducibility
+            
+        Returns:
+            List of synthetic Bar objects
+        """
+        import numpy as np
+        
+        np.random.seed(seed)
+        
+        bars: List[Bar] = []
+        current_price = initial_price
+        
+        for i in range(num_bars):
+            # Generate random return
+            return_pct = np.random.normal(trend, volatility)
+            
+            # Calculate OHLC
+            open_price = current_price
+            close_price = open_price * (1 + return_pct)
+            
+            # High and low with some randomness
+            intrabar_range = abs(return_pct) * 1.5
+            high_price = max(open_price, close_price) * (1 + np.random.uniform(0, intrabar_range))
+            low_price = min(open_price, close_price) * (1 - np.random.uniform(0, intrabar_range))
+            
+            # Ensure high/low consistency
+            high_price = max(high_price, open_price, close_price)
+            low_price = min(low_price, open_price, close_price)
+            
+            # Random volume
+            volume = np.random.uniform(1_000_000, 5_000_000)
+            
+            # Timestamp (daily bars)
+            timestamp = start_date + pd.Timedelta(days=i)
+            
+            bar = Bar(
+                timestamp=timestamp,
+                open=round(open_price, 2),
+                high=round(high_price, 2),
+                low=round(low_price, 2),
+                close=round(close_price, 2),
+                volume=round(volume, 0),
+                symbol=symbol
+            )
+            
+            bars.append(bar)
+            current_price = close_price
+        
+        return bars
+    
+    @staticmethod
+    def create_synthetic(num_bars: int, symbol: str = "SYNTHETIC") -> List[Bar]:
+        """Alias for create_synthetic_data with defaults."""
+        return MarketDataLoader.create_synthetic_data(
+            symbol=symbol,
+            start_date=datetime(2020, 1, 1),
+            num_bars=num_bars
+        )
