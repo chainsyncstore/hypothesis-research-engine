@@ -1,5 +1,7 @@
 import argparse
 import logging
+from datetime import datetime
+from pathlib import Path
 from typing import Callable, Optional
 
 from config.competition_flags import COMPETITION_MODE
@@ -30,6 +32,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+DEBUG_TRACE_PATH = Path("results/run_meta_debug.log")
 
 def main():
     parser = argparse.ArgumentParser(description="Run meta-strategy simulation.")
@@ -46,6 +49,10 @@ def main():
     parser.add_argument("--execution-policy", default="RESEARCH", help="Execution policy ID to enforce")
     
     args = parser.parse_args()
+    
+    DEBUG_TRACE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with DEBUG_TRACE_PATH.open("a", encoding="utf-8") as handle:
+        handle.write(f"{datetime.now().isoformat()} | ARGS: {args}\n")
     
     settings = get_settings()
     repo = EvaluationRepository(settings.database_path)
@@ -83,6 +90,8 @@ def main():
         HypothesisStatus.PROMOTED.value,
         policy_id=policy.policy_id
     )
+    with DEBUG_TRACE_PATH.open("a", encoding="utf-8") as handle:
+        handle.write(f"{datetime.now().isoformat()} | PROMOTED_COUNT: {len(promoted_ids)}\n")
     
     if not promoted_ids:
         logger.warning("No PROMOTED hypotheses found.")
@@ -135,6 +144,8 @@ def main():
     event_logger: Optional[ExecutionEventLogger] = None
     
     if args.paper:
+        if args.paper_log:
+            Path(args.paper_log).parent.mkdir(parents=True, exist_ok=True)
         logger.info("Paper execution enabled.")
         event_logger = ExecutionEventLogger(persist_path=args.paper_log)
         event_logger.log(
@@ -233,3 +244,7 @@ def main():
             account.cash,
             len(account.positions),
         )
+
+
+if __name__ == "__main__":
+    main()

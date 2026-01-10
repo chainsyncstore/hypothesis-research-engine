@@ -1,0 +1,6 @@
+2026-01-10T16:17:55.426238 | ARGS: Namespace(policy='WF_V1', symbol='SYNTHETIC', data_path='results/synthetic_meta.csv', capital=100000.0, max_drawdown=0.2, weighting='equal', tag='COMPETITION_DRY_RUN', paper=True, paper_log='results/competition_dry_run_log.jsonl', paper_max_notional=0.0, execution_policy='COMPETITION_5PERCENTERS')
+2026-01-10T16:17:55.443690 | PROMOTED_COUNT: 2
+2026-01-10T16:32:48.724588 | ARGS: Namespace(policy='WF_V1', symbol='EURUSD', data_path='results/eurusd_meta.csv', capital=100000.0, max_drawdown=0.2, weighting='equal', tag='COMPETITION_DRY_RUN', paper=True, paper_log='results/competition_dry_run_eurusd.jsonl', paper_max_notional=0.0, execution_policy='COMPETITION_5PERCENTERS')
+2026-01-10T16:32:48.743462 | PROMOTED_COUNT: 2
+2026-01-10T16:50:03.196283 | ARGS: Namespace(policy='WF_V1', symbol='EURUSD', data_path='results/eurusd_meta.csv', capital=100000.0, max_drawdown=0.2, weighting='equal', tag='COMPETITION_DRY_RUN', paper=True, paper_log='results/competition_dry_run_eurusd.jsonl', paper_max_notional=0.0, execution_policy='COMPETITION_5PERCENTERS')
+2026-01-10T16:50:03.212550 | PROMOTED_COUNT: 2
