@@ -1,0 +1,572 @@
+2026-01-14 11:28:08,755 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 11:28:08,755 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 11:28:08,757 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 11:28:08,758 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 11:28:08,772 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 11:28:08,773 - __main__ - INFO - Simulation complete. Storing 4 portfolio snapshots...
+2026-01-14 11:28:08,828 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 12:20:00 to results\live_state.json
+2026-01-14 11:28:08,828 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 11:28:08,828 - __main__ - INFO - Final Capital: $24.43
+2026-01-14 11:28:08,828 - __main__ - INFO - Return: -99.76%
+2026-01-14 11:28:08,828 - __main__ - INFO - Max Drawdown: 99.76%
+2026-01-14 11:40:58,564 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 11:40:58,565 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 11:40:58,566 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 11:40:58,568 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 11:40:58,578 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 11:40:58,579 - __main__ - INFO - Simulation complete. Storing 3 portfolio snapshots...
+2026-01-14 11:40:58,614 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 12:35:00 to results\live_state.json
+2026-01-14 11:40:58,614 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 11:40:58,614 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 11:40:58,615 - __main__ - INFO - Return: -0.00%
+2026-01-14 11:40:58,615 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 11:51:34,586 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 11:51:34,586 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 11:51:34,587 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 11:51:34,589 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 11:51:34,600 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 11:51:34,601 - __main__ - INFO - Simulation complete. Storing 2 portfolio snapshots...
+2026-01-14 11:51:34,653 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 12:45:00 to results\live_state.json
+2026-01-14 11:51:34,653 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 11:51:34,653 - __main__ - INFO - Final Capital: $11.63
+2026-01-14 11:51:34,653 - __main__ - INFO - Return: -99.88%
+2026-01-14 11:51:34,653 - __main__ - INFO - Max Drawdown: 99.88%
+2026-01-14 11:52:04,885 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 11:52:04,886 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 11:52:04,887 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 11:52:04,889 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 11:52:04,898 - __main__ - INFO - No new bars detected in C:\Users\HP\AppData\Roaming\MetaQuotes\Terminal\10CE948A1DFC9A8C27E56E827008EBD4\MQL5\Files\results\live_eurusd.csv (last_seen=2026-01-14 12:45:00)
+2026-01-14 11:57:03,783 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 11:57:03,783 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 11:57:03,785 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 11:57:03,786 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 11:57:03,797 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 11:57:03,797 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 11:57:03,838 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 12:50:00 to results\live_state.json
+2026-01-14 11:57:03,838 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 11:57:03,838 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 11:57:03,838 - __main__ - INFO - Return: -0.00%
+2026-01-14 11:57:03,838 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:02:04,773 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:02:04,774 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:02:04,776 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:02:04,777 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:02:04,820 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:02:04,820 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:02:04,834 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 12:55:00 to results\live_state.json
+2026-01-14 12:02:04,834 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:02:04,834 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 12:02:04,834 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:02:04,834 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:07:03,792 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:07:03,792 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:07:03,793 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:07:03,795 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:07:03,804 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:07:03,805 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:07:03,818 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:00:00 to results\live_state.json
+2026-01-14 12:07:03,818 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:07:03,818 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 12:07:03,818 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:07:03,818 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:12:04,602 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:12:04,603 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:12:04,605 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:12:04,608 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:12:04,652 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:12:04,652 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:12:04,696 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:05:00 to results\live_state.json
+2026-01-14 12:12:04,696 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:12:04,696 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 12:12:04,697 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:12:04,697 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:17:04,714 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:17:04,715 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:17:04,717 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:17:04,721 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:17:04,764 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:17:04,764 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:17:04,810 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:10:00 to results\live_state.json
+2026-01-14 12:17:04,811 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:17:04,811 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 12:17:04,811 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:17:04,811 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:22:04,720 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:22:04,721 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:22:04,723 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:22:04,727 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:22:04,769 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:22:04,770 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:22:04,815 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:15:00 to results\live_state.json
+2026-01-14 12:22:04,816 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:22:04,816 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 12:22:04,816 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:22:04,816 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:27:04,636 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:27:04,636 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:27:04,639 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:27:04,642 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:27:04,683 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:27:04,684 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:27:04,729 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:20:00 to results\live_state.json
+2026-01-14 12:27:04,729 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:27:04,729 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 12:27:04,730 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:27:04,730 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:32:04,665 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:32:04,665 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:32:04,667 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:32:04,671 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:32:04,713 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:32:04,714 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:32:04,760 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:25:00 to results\live_state.json
+2026-01-14 12:32:04,761 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:32:04,761 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 12:32:04,761 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:32:04,761 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:37:04,622 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:37:04,622 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:37:04,624 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:37:04,628 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:37:04,669 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:37:04,670 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:37:04,713 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:30:00 to results\live_state.json
+2026-01-14 12:37:04,713 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:37:04,713 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 12:37:04,713 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:37:04,713 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:42:04,620 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:42:04,620 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:42:04,622 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:42:04,626 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:42:04,667 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:42:04,668 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:42:04,715 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:35:00 to results\live_state.json
+2026-01-14 12:42:04,715 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:42:04,716 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 12:42:04,716 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:42:04,716 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:47:05,132 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:47:05,132 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:47:05,135 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:47:05,138 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:47:05,178 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:47:05,179 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:47:05,227 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:40:00 to results\live_state.json
+2026-01-14 12:47:05,228 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:47:05,228 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 12:47:05,230 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:47:05,230 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:52:05,066 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:52:05,067 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:52:05,070 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:52:05,073 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:52:05,176 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:52:05,177 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:52:05,196 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:45:00 to results\live_state.json
+2026-01-14 12:52:05,196 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:52:05,197 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 12:52:05,197 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:52:05,197 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 12:57:04,626 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 12:57:04,626 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 12:57:04,628 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 12:57:04,632 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 12:57:04,676 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 12:57:04,677 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 12:57:04,724 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:50:00 to results\live_state.json
+2026-01-14 12:57:04,724 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 12:57:04,724 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 12:57:04,724 - __main__ - INFO - Return: -0.00%
+2026-01-14 12:57:04,725 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:02:04,691 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:02:04,691 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:02:04,694 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:02:04,697 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:02:04,740 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:02:04,741 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:02:04,785 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 13:55:00 to results\live_state.json
+2026-01-14 13:02:04,785 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:02:04,785 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 13:02:04,786 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:02:04,786 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:07:04,683 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:07:04,684 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:07:04,686 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:07:04,690 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:07:04,731 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:07:04,732 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:07:04,776 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:00:00 to results\live_state.json
+2026-01-14 13:07:04,777 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:07:04,777 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 13:07:04,777 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:07:04,777 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:12:04,678 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:12:04,678 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:12:04,682 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:12:04,685 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:12:04,756 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:12:04,757 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:12:04,774 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:05:00 to results\live_state.json
+2026-01-14 13:12:04,774 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:12:04,775 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 13:12:04,775 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:12:04,775 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:17:04,699 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:17:04,699 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:17:04,702 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:17:04,705 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:17:04,746 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:17:04,747 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:17:04,791 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:10:00 to results\live_state.json
+2026-01-14 13:17:04,791 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:17:04,791 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 13:17:04,791 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:17:04,791 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:22:04,679 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:22:04,680 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:22:04,682 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:22:04,685 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:22:04,727 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:22:04,728 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:22:04,773 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:15:00 to results\live_state.json
+2026-01-14 13:22:04,773 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:22:04,773 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 13:22:04,774 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:22:04,774 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:27:04,713 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:27:04,713 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:27:04,716 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:27:04,719 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:27:04,761 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:27:04,761 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:27:04,806 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:20:00 to results\live_state.json
+2026-01-14 13:27:04,806 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:27:04,807 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 13:27:04,807 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:27:04,807 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:32:04,811 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:32:04,811 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:32:04,814 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:32:04,817 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:32:04,857 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:32:04,858 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:32:04,877 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:25:00 to results\live_state.json
+2026-01-14 13:32:04,877 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:32:04,877 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 13:32:04,877 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:32:04,878 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:37:04,684 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:37:04,684 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:37:04,687 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:37:04,690 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:37:04,730 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:37:04,731 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:37:04,776 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:30:00 to results\live_state.json
+2026-01-14 13:37:04,776 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:37:04,776 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 13:37:04,777 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:37:04,777 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:42:04,736 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:42:04,736 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:42:04,739 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:42:04,742 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:42:04,785 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:42:04,786 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:42:04,803 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:35:00 to results\live_state.json
+2026-01-14 13:42:04,803 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:42:04,803 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 13:42:04,803 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:42:04,803 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:47:04,666 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:47:04,666 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:47:04,669 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:47:04,672 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:47:04,714 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:47:04,715 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:47:04,759 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:40:00 to results\live_state.json
+2026-01-14 13:47:04,759 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:47:04,760 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 13:47:04,760 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:47:04,760 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:52:04,722 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:52:04,723 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:52:04,725 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:52:04,729 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:52:04,769 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:52:04,770 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:52:04,815 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:45:00 to results\live_state.json
+2026-01-14 13:52:04,816 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:52:04,816 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 13:52:04,816 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:52:04,817 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 13:57:05,026 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 13:57:05,027 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 13:57:05,029 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 13:57:05,032 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 13:57:05,110 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 13:57:05,111 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 13:57:05,130 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:50:00 to results\live_state.json
+2026-01-14 13:57:05,130 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 13:57:05,130 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 13:57:05,130 - __main__ - INFO - Return: -0.00%
+2026-01-14 13:57:05,131 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 14:02:07,082 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:02:07,083 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:02:07,085 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:02:07,088 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:02:07,158 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 14:02:07,159 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 14:02:07,178 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 14:55:00 to results\live_state.json
+2026-01-14 14:02:07,179 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 14:02:07,179 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 14:02:07,179 - __main__ - INFO - Return: -0.00%
+2026-01-14 14:02:07,179 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 14:07:05,019 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:07:05,020 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:07:05,023 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:07:05,027 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:07:05,048 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 14:07:05,049 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 14:07:05,098 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 15:00:00 to results\live_state.json
+2026-01-14 14:07:05,098 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 14:07:05,098 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 14:07:05,098 - __main__ - INFO - Return: -0.00%
+2026-01-14 14:07:05,099 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 14:12:04,893 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:12:04,894 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:12:04,896 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:12:04,900 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:12:04,945 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 14:12:04,945 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 14:12:04,989 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 15:05:00 to results\live_state.json
+2026-01-14 14:12:04,989 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 14:12:04,989 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 14:12:04,989 - __main__ - INFO - Return: -0.00%
+2026-01-14 14:12:04,990 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 14:17:04,909 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:17:04,910 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:17:04,912 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:17:04,916 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:17:04,965 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 14:17:04,965 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 14:17:05,010 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 15:10:00 to results\live_state.json
+2026-01-14 14:17:05,010 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 14:17:05,011 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 14:17:05,011 - __main__ - INFO - Return: -0.00%
+2026-01-14 14:17:05,011 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 14:22:06,548 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:22:06,549 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:22:06,554 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:22:06,560 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:22:06,594 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 14:22:06,595 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 14:22:06,616 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 15:15:00 to results\live_state.json
+2026-01-14 14:22:06,616 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 14:22:06,616 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 14:22:06,617 - __main__ - INFO - Return: -0.00%
+2026-01-14 14:22:06,617 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 14:27:06,411 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:27:06,411 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:27:06,415 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:27:06,421 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:27:06,454 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\HP\Downloads\hypothesis-research-engine\orchestrator\run_meta.py", line 313, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\HP\Downloads\hypothesis-research-engine\orchestrator\run_meta.py", line 269, in main
+    engine = MetaPortfolioEngine(
+        ensemble=ensemble,
+    ...<6 lines>...
+        explain_decisions=args.explain_decisions,
+    )
+TypeError: MetaPortfolioEngine.__init__() got an unexpected keyword argument 'telemetry'
+2026-01-14 14:32:06,794 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:32:06,794 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:32:06,798 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:32:06,802 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:32:06,866 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 14:32:06,868 - __main__ - INFO - Simulation complete. Storing 2 portfolio snapshots...
+2026-01-14 14:32:06,914 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 15:25:00 to results\live_state.json
+2026-01-14 14:32:06,914 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 14:32:06,914 - __main__ - INFO - Final Capital: $11.63
+2026-01-14 14:32:06,914 - __main__ - INFO - Return: -99.88%
+2026-01-14 14:32:06,915 - __main__ - INFO - Max Drawdown: 99.88%
+2026-01-14 14:37:06,697 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:37:06,698 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:37:06,702 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:37:06,709 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:37:06,787 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 14:37:06,789 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 14:37:06,815 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 15:30:00 to results\live_state.json
+2026-01-14 14:37:06,815 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 14:37:06,816 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 14:37:06,816 - __main__ - INFO - Return: -0.00%
+2026-01-14 14:37:06,816 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 14:42:05,731 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:42:05,732 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:42:05,736 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:42:05,744 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:42:05,801 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 14:42:05,805 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 14:42:05,855 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 15:35:00 to results\live_state.json
+2026-01-14 14:42:05,855 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 14:42:05,855 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 14:42:05,856 - __main__ - INFO - Return: -0.00%
+2026-01-14 14:42:05,856 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 14:47:07,464 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:47:07,464 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:47:07,470 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:47:07,475 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:47:07,547 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 14:47:07,549 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 14:47:07,573 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 15:40:00 to results\live_state.json
+2026-01-14 14:47:07,573 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 14:47:07,573 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 14:47:07,573 - __main__ - INFO - Return: -0.00%
+2026-01-14 14:47:07,574 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 14:52:07,498 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:52:07,499 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:52:07,504 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:52:07,508 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:52:07,593 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 14:52:07,595 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 14:52:07,620 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 15:45:00 to results\live_state.json
+2026-01-14 14:52:07,620 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 14:52:07,620 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 14:52:07,620 - __main__ - INFO - Return: -0.00%
+2026-01-14 14:52:07,621 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 14:57:04,940 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 14:57:04,940 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 14:57:04,945 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 14:57:04,949 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 14:57:04,990 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 14:57:04,992 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 14:57:05,038 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 15:50:00 to results\live_state.json
+2026-01-14 14:57:05,039 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 14:57:05,039 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 14:57:05,039 - __main__ - INFO - Return: -0.00%
+2026-01-14 14:57:05,039 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 15:02:05,807 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:02:05,808 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:02:05,810 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:02:05,814 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:02:05,867 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 15:02:05,868 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 15:02:05,910 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 15:55:00 to results\live_state.json
+2026-01-14 15:02:05,911 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 15:02:05,911 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 15:02:05,911 - __main__ - INFO - Return: -0.00%
+2026-01-14 15:02:05,911 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 15:07:04,560 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:07:04,561 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:07:04,564 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:07:04,567 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:07:04,590 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 15:07:04,591 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 15:07:04,630 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 16:00:00 to results\live_state.json
+2026-01-14 15:07:04,630 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 15:07:04,630 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 15:07:04,630 - __main__ - INFO - Return: -0.00%
+2026-01-14 15:07:04,631 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 15:12:05,107 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:12:05,107 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:12:05,110 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:12:05,114 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:12:05,159 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 15:12:05,160 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 15:12:05,201 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 16:05:00 to results\live_state.json
+2026-01-14 15:12:05,202 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 15:12:05,202 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 15:12:05,202 - __main__ - INFO - Return: -0.00%
+2026-01-14 15:12:05,202 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 15:17:05,205 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:17:05,205 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:17:05,208 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:17:05,213 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:17:05,256 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 15:17:05,257 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 15:17:05,297 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 16:10:00 to results\live_state.json
+2026-01-14 15:17:05,298 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 15:17:05,298 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 15:17:05,299 - __main__ - INFO - Return: -0.00%
+2026-01-14 15:17:05,299 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 15:22:05,175 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:22:05,175 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:22:05,178 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:22:05,182 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:22:05,205 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 15:22:05,206 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 15:22:05,255 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 16:15:00 to results\live_state.json
+2026-01-14 15:22:05,255 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 15:22:05,256 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 15:22:05,256 - __main__ - INFO - Return: -0.00%
+2026-01-14 15:22:05,256 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 15:23:10,347 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:23:10,347 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:23:10,350 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:23:10,354 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:23:10,373 - __main__ - INFO - No new bars detected in C:\Users\HP\AppData\Roaming\MetaQuotes\Terminal\10CE948A1DFC9A8C27E56E827008EBD4\MQL5\Files\results\live_eurusd.csv (last_seen=2026-01-14 16:15:00)
+2026-01-14 15:27:07,657 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:27:07,657 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:27:07,662 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:27:07,667 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:27:07,703 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 15:27:07,704 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 15:27:07,752 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 16:20:00 to results\live_state.json
+2026-01-14 15:27:07,752 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 15:27:07,753 - __main__ - INFO - Final Capital: $9,999.98
+2026-01-14 15:27:07,753 - __main__ - INFO - Return: -0.00%
+2026-01-14 15:27:07,753 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 15:31:45,433 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:31:45,434 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:31:45,437 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:31:45,441 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:31:45,515 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 15:31:45,534 - __main__ - INFO - Simulation complete. Storing 94 portfolio snapshots...
+2026-01-14 15:31:47,585 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 16:25:00 to results\live_state.json
+2026-01-14 15:31:47,585 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 15:31:47,586 - __main__ - INFO - Final Capital: $11.63
+2026-01-14 15:31:47,586 - __main__ - INFO - Return: -99.88%
+2026-01-14 15:31:47,586 - __main__ - INFO - Max Drawdown: 99.88%
+2026-01-14 15:32:05,348 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:32:05,348 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:32:05,351 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:32:05,354 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:32:05,375 - __main__ - INFO - No new bars detected in C:\Users\HP\AppData\Roaming\MetaQuotes\Terminal\10CE948A1DFC9A8C27E56E827008EBD4\MQL5\Files\results\live_eurusd.csv (last_seen=2026-01-14 16:25:00)
+2026-01-14 15:37:06,207 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:37:06,207 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:37:06,211 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:37:06,215 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:37:06,241 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 15:37:06,242 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 15:37:06,290 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 16:30:00 to results\live_state.json
+2026-01-14 15:37:06,290 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 15:37:06,294 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 15:37:06,294 - __main__ - INFO - Return: -0.00%
+2026-01-14 15:37:06,294 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 15:42:05,492 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:42:05,492 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:42:05,495 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:42:05,499 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:42:05,525 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 15:42:05,526 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 15:42:05,576 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 16:35:00 to results\live_state.json
+2026-01-14 15:42:05,577 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 15:42:05,577 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 15:42:05,578 - __main__ - INFO - Return: -0.00%
+2026-01-14 15:42:05,578 - __main__ - INFO - Max Drawdown: 0.00%
+2026-01-14 15:47:05,138 - __main__ - INFO - COMPETITION_MODE enabled. Overriding requested execution policy RESEARCH with COMPETITION_5PERCENTERS
+2026-01-14 15:47:05,139 - __main__ - INFO - Starting Meta-Strategy Simulation for policy WF_V1 on EURUSD with execution policy COMPETITION_5PERCENTERS
+2026-01-14 15:47:05,141 - __main__ - INFO - Found 2 promoted hypotheses: ['simple_momentum', 'always_long']
+2026-01-14 15:47:05,145 - __main__ - INFO - Initial Weights: {'simple_momentum': 0.5, 'always_long': 0.5}
+2026-01-14 15:47:05,167 - __main__ - INFO - competition_telemetry | event=competition_profile_loaded payload={'policy_id': 'COMPETITION_5PERCENTERS', 'label': 'COMPETITION_5PERCENTERS', 'tag': 'COMPETITION_LIVE'}
+2026-01-14 15:47:05,169 - __main__ - INFO - Simulation complete. Storing 1 portfolio snapshots...
+2026-01-14 15:47:05,214 - __main__ - INFO - Persisted last_seen timestamp 2026-01-14 16:40:00 to results\live_state.json
+2026-01-14 15:47:05,215 - __main__ - INFO - --- Meta Portfolio Result ---
+2026-01-14 15:47:05,215 - __main__ - INFO - Final Capital: $9,999.99
+2026-01-14 15:47:05,215 - __main__ - INFO - Return: -0.00%
+2026-01-14 15:47:05,216 - __main__ - INFO - Max Drawdown: 0.00%

@@ -1,1 +1,1 @@
-COMPETITION_MODE: bool = False
+COMPETITION_MODE: bool = True

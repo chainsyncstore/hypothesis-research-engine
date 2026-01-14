@@ -2,4 +2,4 @@
 Global execution feature flags.
 """
 
-EXECUTION_ENABLED = False
+EXECUTION_ENABLED = True

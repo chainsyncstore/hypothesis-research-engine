@@ -9,7 +9,13 @@ from state.market_state import MarketState
 from state.position_state import PositionState, PositionSide
 from portfolio.models import PortfolioState, PortfolioAllocation
 from portfolio.ensemble import Ensemble
-from portfolio.risk import RiskRule
+from portfolio.risk import (
+    RiskRule,
+    MaxDrawdownRule,
+    TradeThrottle,
+    LossStreakGuard,
+    ExecutionPolicyRule,
+)
 from portfolio.risk_scaling import RiskTierResolver
 from clock.clock import Clock
 from config.execution_flags import EXECUTION_ENABLED
@@ -101,6 +107,8 @@ class MetaPortfolioEngine:
         execution_intent_sink: Optional[ExecutionIntentSink] = None,
         execution_mode: Literal["PAPER", "LIVE"] = "PAPER",
         risk_tier_resolver: Optional[RiskTierResolver] = None,
+        telemetry: Optional[Callable[[str, dict], None]] = None,
+        explain_decisions: bool = False,
     ):
         self.ensemble = ensemble
         self.initial_capital = initial_capital
@@ -111,6 +119,8 @@ class MetaPortfolioEngine:
         self._execution_intent_sink = execution_intent_sink
         self.execution_mode = execution_mode
         self.risk_tier_resolver = risk_tier_resolver or RiskTierResolver()
+        self.telemetry = telemetry
+        self.explain_decisions = explain_decisions
         
         # 1. Shadow Track Initialization
         # We give each shadow sim a hypothetical capital (e.g. 1M) just to track % returns and positions accurately.
@@ -177,6 +187,8 @@ class MetaPortfolioEngine:
                         [decision], bar, self.shadow_position_states[hid]
                     )
 
+            pre_trade_snapshot = self._create_snapshot(bar, peak_equity)
+
             # --- B. Meta Track Execution ---
             
             # 3. Calculate Target Net Exposure
@@ -185,32 +197,40 @@ class MetaPortfolioEngine:
                 self.market_state
             )
             risk_tier = self.risk_tier_resolver.resolve(regime_confidence)
-            
             net_exposure_target = 0.0
-            
+        
             for h in self.ensemble.hypotheses:
                 hid = h.hypothesis_id
-                
+            
                 # Check Regime
                 if h.allowed_regimes and current_regime not in h.allowed_regimes:
-                    # Gated!
-                    # We continue tracking shadow performance, but contribution to Meta Portfolio is 0.
+                    self._emit_decision_block_event(
+                        reason="regime_unfavorable",
+                        bar=bar,
+                        extra={
+                            "hypothesis_id": hid,
+                            "current_regime": getattr(current_regime, "value", str(current_regime)),
+                            "allowed_regimes": [getattr(reg, "value", str(reg)) for reg in h.allowed_regimes],
+                            "bar_index": bar_idx,
+                        },
+                    )
                     continue
-                    
+                
                 weight = self.ensemble.weights.get(hid, 0.0)
                 pos_state = self.shadow_position_states[hid]
-                
+            
                 sign = 0.0
                 if pos_state.has_position:
                     if pos_state.position.side == PositionSide.LONG:
                         sign = 1.0
                     else:
                         sign = -1.0
-                
-                net_exposure_target += (weight * sign)
             
+                net_exposure_target += (weight * sign)
+        
             # Determine target meta exposure measured in units using regime-aware risk fractions
             curr_equity = self.meta_simulator.get_total_capital(bar.open, self.meta_position_state)
+            allocation_view = self._build_meta_allocation(bar, curr_equity)
             exposure_ratio = abs(net_exposure_target)
             risk_fraction = max(0.0, min(1.0, risk_tier.risk_fraction))
             target_value = curr_equity * exposure_ratio * risk_fraction
@@ -219,100 +239,112 @@ class MetaPortfolioEngine:
                 target_value = max_notional
             target_units = float(int(target_value / bar.open)) if bar.open > 0 else 0.0
 
+            if target_units == 0 and exposure_ratio > 0 and risk_fraction == 0:
+                self._emit_decision_block_event(
+                    reason="confidence_below_threshold",
+                    bar=bar,
+                    extra={
+                        "regime_confidence": getattr(regime_confidence, "value", str(regime_confidence)),
+                        "exposure_ratio": exposure_ratio,
+                        "risk_fraction": risk_fraction,
+                        "bar_index": bar_idx,
+                    },
+                )
+
             target_side = None
             if target_units > 0:
                 target_side = PositionSide.LONG if net_exposure_target > 0 else PositionSide.SHORT
 
-            current_side = None
-            current_units: float = 0.0
-            if self.meta_position_state.has_position:
-                pos = self.meta_position_state.position
-                current_side = pos.side
-                current_units = pos.size
+                current_side = None
+                current_units: float = 0.0
+                if self.meta_position_state.has_position:
+                    pos = self.meta_position_state.position
+                    current_side = pos.side
+                    current_units = pos.size
 
-            # Rebalancing Logic (Close & Re-Open Strategy)
-            decisions = []
-            emitted_intents: List[ExecutionIntent] = []
+                # Rebalancing Logic (Close & Re-Open Strategy)
+                decisions = []
+                emitted_intents: List[ExecutionIntent] = []
 
-            risk_metadata = {
-                "risk_label": risk_tier.label,
-                "risk_fraction": risk_fraction,
-                "regime_confidence": regime_confidence.value,
-            }
+                risk_metadata = {
+                    "risk_label": risk_tier.label,
+                    "risk_fraction": risk_fraction,
+                    "regime_confidence": regime_confidence.value,
+                }
 
-            # Case 1: Switch Side or Go Flat
-            if current_side and (current_side != target_side or target_units == 0):
-                size_to_close = abs(current_units)
-                decisions.append(QueuedDecision(
-                    intent=TradeIntent(type=IntentType.CLOSE, size=1.0),
-                    decision_timestamp=bar.timestamp,
-                    decision_bar_index=bar_idx
-                ))
-                if size_to_close > 0:
+                def enqueue_decision(
+                    intent: TradeIntent,
+                    action: IntentAction,
+                    quantity: float,
+                    metadata: Dict[str, Any],
+                ) -> bool:
+                    if quantity <= 0:
+                        return False
+                    if not self._is_trade_allowed(intent, allocation_view, pre_trade_snapshot, bar, bar_idx):
+                        return False
+                    decisions.append(QueuedDecision(
+                        intent=intent,
+                        decision_timestamp=bar.timestamp,
+                        decision_bar_index=bar_idx
+                    ))
                     emitted_intents.append(
                         self._build_execution_intent(
-                            action=IntentAction.CLOSE,
-                            quantity=size_to_close,
+                            action=action,
+                            quantity=quantity,
                             bar=bar,
                             bar_idx=bar_idx,
-                            metadata={
-                                "reason": "side_change_or_flat",
-                                **risk_metadata,
-                            }
+                            metadata=metadata,
                         )
                     )
-                current_units = 0
-                current_side = None
+                    return True
 
-            # Case 2: Size Change (Same Side)
-            if current_side == target_side and current_side is not None and current_units != target_units:
-                size_to_close = abs(current_units)
-                decisions.append(QueuedDecision(
-                    intent=TradeIntent(type=IntentType.CLOSE, size=1.0),
-                    decision_timestamp=bar.timestamp,
-                    decision_bar_index=bar_idx
-                ))
-                if size_to_close > 0:
-                    emitted_intents.append(
-                        self._build_execution_intent(
-                            action=IntentAction.CLOSE,
-                            quantity=size_to_close,
-                            bar=bar,
-                            bar_idx=bar_idx,
-                            metadata={
-                                "reason": "resize",
-                                **risk_metadata,
-                            }
-                        )
-                    )
-                current_units = 0
-                current_side = None
+                # Case 1: Switch Side or Go Flat
+                if current_side and (current_side != target_side or target_units == 0):
+                    size_to_close = abs(current_units)
+                    if enqueue_decision(
+                        intent=TradeIntent(type=IntentType.CLOSE, size=1.0),
+                        action=IntentAction.CLOSE,
+                        quantity=size_to_close,
+                        metadata={
+                            "reason": "side_change_or_flat",
+                            **risk_metadata,
+                        },
+                    ):
+                        current_units = 0
+                        current_side = None
 
-            # Case 3: Open Target (if not already there)
-            if target_side and target_units > 0 and current_units == 0:
-                intent_type = IntentType.BUY if target_side == PositionSide.LONG else IntentType.SELL
-                decisions.append(QueuedDecision(
-                    intent=TradeIntent(type=intent_type, size=target_units),  # Size is UNITS for MetaSim
-                    decision_timestamp=bar.timestamp,
-                    decision_bar_index=bar_idx
-                ))
-                emitted_intents.append(
-                    self._build_execution_intent(
+                # Case 2: Size Change (Same Side)
+                if current_side == target_side and current_side is not None and current_units != target_units:
+                    size_to_close = abs(current_units)
+                    if enqueue_decision(
+                        intent=TradeIntent(type=IntentType.CLOSE, size=1.0),
+                        action=IntentAction.CLOSE,
+                        quantity=size_to_close,
+                        metadata={
+                            "reason": "resize",
+                            **risk_metadata,
+                        },
+                    ):
+                        current_units = 0
+                        current_side = None
+
+                # Case 3: Open Target (if not already there)
+                if target_side and target_units > 0 and current_units == 0:
+                    intent_type = IntentType.BUY if target_side == PositionSide.LONG else IntentType.SELL
+                    enqueue_decision(
+                        intent=TradeIntent(type=intent_type, size=target_units),  # Size is UNITS for MetaSim
                         action=IntentAction.BUY if intent_type == IntentType.BUY else IntentAction.SELL,
                         quantity=target_units,
-                        bar=bar,
-                        bar_idx=bar_idx,
                         metadata={
                             "reason": "target_entry",
                             **risk_metadata,
-                        }
+                        },
                     )
-                )
 
-            # Execute Meta Decisions
-            if decisions:
-                self.meta_simulator.execute_decisions(decisions, bar, self.meta_position_state)
-                self._publish_execution_intents(emitted_intents)
+                # Execute Meta Decisions
+                if decisions:
+                    self.meta_simulator.execute_decisions(decisions, bar, self.meta_position_state)
+                    self._publish_execution_intents(emitted_intents)
 
             # Update peak equity
             snapshot = self._create_snapshot(bar, peak_equity)
@@ -441,4 +473,75 @@ class MetaPortfolioEngine:
             total_unrealized_pnl=total_unreal,
             drawdown_pct=drawdown
         )
+
+    def _build_meta_allocation(self, bar: Bar, curr_equity: float) -> PortfolioAllocation:
+        unrealized = 0.0
+        if self.meta_position_state.has_position:
+            unrealized = self.meta_position_state.get_unrealized_pnl(bar.open)
+        realized = curr_equity - self.initial_capital - unrealized
+        return PortfolioAllocation(
+            hypothesis_id=META_ALLOCATION_KEY,
+            allocated_capital=float(curr_equity),
+            available_capital=float(self.meta_simulator.get_available_capital()),
+            symbol=self.symbol,
+            reference_price=bar.open,
+            current_position=self.meta_position_state.position if self.meta_position_state.has_position else None,
+            unrealized_pnl=float(unrealized),
+            realized_pnl=float(realized),
+        )
+
+    def _is_trade_allowed(
+        self,
+        intent: TradeIntent,
+        allocation: PortfolioAllocation,
+        portfolio_state: PortfolioState,
+        bar: Bar,
+        bar_idx: int,
+    ) -> bool:
+        if not self.risk_rules:
+            return True
+        for rule in self.risk_rules:
+            can_execute, reason = rule.can_execute(intent, allocation, portfolio_state)
+            if can_execute:
+                continue
+            self._emit_decision_block_event(
+                reason=self._map_risk_rule_reason(rule),
+                bar=bar,
+                extra={
+                    "rule": rule.__class__.__name__,
+                    "detail": reason,
+                    "intent_type": intent.type.value,
+                    "bar_index": bar_idx,
+                },
+            )
+            return False
+        return True
+
+    def _map_risk_rule_reason(self, rule: RiskRule) -> str:
+        if isinstance(rule, MaxDrawdownRule):
+            return "drawdown_guard_active"
+        if isinstance(rule, TradeThrottle):
+            return "trade_throttled"
+        if isinstance(rule, LossStreakGuard):
+            return "loss_streak_guard_active"
+        if isinstance(rule, ExecutionPolicyRule):
+            return "execution_policy_rejected"
+        return "risk_rule_blocked"
+
+    def _emit_decision_block_event(
+        self,
+        reason: str,
+        bar: Bar,
+        extra: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        if not self.explain_decisions or not self.telemetry:
+            return
+        payload: Dict[str, Any] = {
+            "reason": reason,
+            "symbol": self.symbol,
+            "timestamp": bar.timestamp.isoformat(),
+        }
+        if extra:
+            payload.update(extra)
+        self.telemetry("decision_blocked", payload)
 

@@ -87,6 +87,11 @@ def main():
         default=None,
         help="Optional path to persist last processed bar timestamp (defaults to <data-path>.state)",
     )
+    parser.add_argument(
+        "--explain-decisions",
+        action="store_true",
+        help="Emit structured reasons when trade decisions are blocked"
+    )
     
     args = parser.parse_args()
     
@@ -268,6 +273,8 @@ def main():
         risk_rules=risk_rules,
         symbol=args.symbol,
         execution_intent_sink=execution_sink,
+        telemetry=telemetry_hook,
+        explain_decisions=args.explain_decisions,
     )
     
     # 5. Run
