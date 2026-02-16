@@ -18,11 +18,15 @@ logger = logging.getLogger(__name__)
 
 def add_labels(df: pd.DataFrame, horizons: List[int] | None = None) -> pd.DataFrame:
     """
-    Add binary directional labels for each horizon.
+    Add ternary directional labels for each horizon.
 
-    Label definition:
-        label_{h}m = 1  if  close[t + h] > close[t]
-        label_{h}m = 0  otherwise
+    Label definition (with dead zone):
+        move = close[t + h] - close[t]
+        label_{h}m =  1  if  move >  dead_zone   (UP — tradeable long)
+        label_{h}m =  0  if  move < -dead_zone   (DOWN — tradeable short)
+        label_{h}m = -1  if  |move| <= dead_zone  (FLAT — excluded from training)
+
+    The dead zone eliminates sub-spread moves that are untradeable noise.
 
     Rows where the forward label cannot be computed (tail) are dropped.
 
@@ -37,19 +41,37 @@ def add_labels(df: pd.DataFrame, horizons: List[int] | None = None) -> pd.DataFr
 
     cfg = get_research_config()
     horizons = horizons or cfg.horizons
+    dead_zone = cfg.dead_zone_price
 
     out = df.copy()
     max_horizon = max(horizons)
 
     for h in horizons:
         future_close = out["close"].shift(-h)
-        out[f"label_{h}m"] = (future_close > out["close"]).astype(int)
+        move = future_close - out["close"]
 
-    # Drop rows where labels are unavailable
+        # Ternary label: 1=UP, 0=DOWN, -1=FLAT (dead zone)
+        label = pd.Series(-1, index=out.index, dtype=int)
+        label[move > dead_zone] = 1
+        label[move < -dead_zone] = 0
+        out[f"label_{h}m"] = label
+
+    # Drop rows where labels are unavailable (tail)
     out = out.iloc[: len(out) - max_horizon].copy()
 
     for h in horizons:
-        pos_rate = out[f"label_{h}m"].mean()
-        logger.info("Label %dm: %d rows, %.1f%% positive", h, len(out), pos_rate * 100)
+        labels = out[f"label_{h}m"]
+        n_up = (labels == 1).sum()
+        n_down = (labels == 0).sum()
+        n_flat = (labels == -1).sum()
+        total = len(labels)
+        logger.info(
+            "Label %dm: %d rows — UP=%.1f%%, DOWN=%.1f%%, FLAT=%.1f%% (dead zone=%.5f)",
+            h, total,
+            n_up / total * 100,
+            n_down / total * 100,
+            n_flat / total * 100,
+            dead_zone,
+        )
 
     return out

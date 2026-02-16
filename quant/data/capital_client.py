@@ -107,7 +107,7 @@ class CapitalClient:
                 "resolution": resolution,
                 "max": self._cfg.max_bars_per_request,
                 "from": current_from.strftime("%Y-%m-%dT%H:%M:%S"),
-                "to": date_to.strftime("%Y-%m-%dT%H:%M:%S"),
+                # "to" is not supported with "max" + "from" for minute resolution
             }
 
             resp = requests.get(url, params=params, headers=self._headers(), timeout=30)

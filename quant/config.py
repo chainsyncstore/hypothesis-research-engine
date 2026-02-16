@@ -110,6 +110,10 @@ class ResearchConfig:
     threshold_max: float = 0.80
     threshold_step: float = 0.05
 
+    # Dead zone for ternary labeling (moves smaller than this are FLAT)
+    dead_zone_pips: float = 0.8
+    dead_zone_price: float = 0.00008  # 0.8 * 0.0001
+
 
 # ---------------------------------------------------------------------------
 # Paths

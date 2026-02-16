@@ -17,11 +17,15 @@ from quant.features import (
     trend,
     volume,
     time_encoding,
+    microstructure,
+    session_context,
+    cross_timeframe,
 )
 
 logger = logging.getLogger(__name__)
 
 # Ordered list of feature modules
+# Note: cross_timeframe must come after trend (uses EMA columns)
 _FEATURE_MODULES = [
     momentum,
     volatility,
@@ -29,6 +33,9 @@ _FEATURE_MODULES = [
     trend,
     volume,
     time_encoding,
+    microstructure,
+    session_context,
+    cross_timeframe,
 ]
 
 # Columns that are NOT features (original OHLCV + intermediate EMAs + labels + regime)

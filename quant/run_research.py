@@ -81,7 +81,7 @@ def generate_synthetic_eurusd(n_bars: int = 40_000, seed: int = 42) -> pd.DataFr
     return df
 
 
-def run_pipeline(df: pd.DataFrame) -> None:
+def run_pipeline(df: pd.DataFrame, optimize: bool = False) -> None:
     """Execute the full research pipeline on prepared data."""
     cfg = get_research_config()
     start_time = time.time()
@@ -129,11 +129,42 @@ def run_pipeline(df: pd.DataFrame) -> None:
     logger.info("=" * 60)
     df_labeled = add_labels(df_features)
 
+    # --- Step 5b: Optimization (if --optimize) ---
+    best_params = None
+    pruned_features = None
+    if optimize:
+        logger.info("=" * 60)
+        logger.info("STEP 5b: Hyperparameter Optimization (Optuna)")
+        logger.info("=" * 60)
+
+        from quant.models.optimizer import optimize_hyperparams
+        from quant.features.feature_selector import prune_features
+
+        best_params = optimize_hyperparams(
+            df_labeled, horizon=cfg.horizons[0], n_trials=50,
+        )
+        logger.info("Best LightGBM params: %s", best_params)
+
+        # Run a quick walk-forward to get feature importance for pruning
+        logger.info("Running feature importance collection for pruning...")
+        wf_baseline = run_walk_forward(df_labeled, params_override=best_params)
+
+        # Prune features
+        fi = wf_baseline.feature_importance.get(cfg.horizons[0], {})
+        # Wrap scalar values in lists for pruner interface
+        fi_dict = {k: [v] for k, v in fi.items()} if fi else {}
+        pruned_features = prune_features(fi_dict, cumulative_threshold=0.95)
+        logger.info("Using %d pruned features (from %d)", len(pruned_features), len(feature_cols))
+
     # --- Step 6: Walk-forward validation ---
     logger.info("=" * 60)
-    logger.info("STEP 6: Walk-Forward Validation")
+    logger.info("STEP 6: Walk-Forward Validation%s", " (OPTIMIZED)" if optimize else "")
     logger.info("=" * 60)
-    wf_result = run_walk_forward(df_labeled)
+    wf_result = run_walk_forward(
+        df_labeled,
+        params_override=best_params,
+        feature_subset=pruned_features,
+    )
 
     # --- Step 7: Monte Carlo ---
     logger.info("=" * 60)
@@ -201,6 +232,7 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="Use synthetic data (no API)")
     parser.add_argument("--fetch", action="store_true", help="Fetch data from Capital.com")
     parser.add_argument("--months", type=int, default=3, help="Months of history to fetch")
+    parser.add_argument("--optimize", action="store_true", help="Run Optuna HPO + feature pruning")
     parser.add_argument("--bars", type=int, default=40000, help="Synthetic bar count for dry-run")
     args = parser.parse_args()
 
@@ -210,7 +242,7 @@ def main() -> None:
     if args.dry_run:
         logger.info("DRY RUN — using synthetic EURUSD data (%d bars)", args.bars)
         df = generate_synthetic_eurusd(n_bars=args.bars)
-        run_pipeline(df)
+        run_pipeline(df, optimize=args.optimize)
 
     elif args.fetch:
         from quant.data.capital_client import CapitalClient
@@ -234,7 +266,7 @@ def main() -> None:
         label = f"EURUSD_1m_{date_from.strftime('%Y%m%d')}_{date_to.strftime('%Y%m%d')}"
         save_raw(df, label)
 
-        run_pipeline(df)
+        run_pipeline(df, optimize=args.optimize)
 
     else:
         # Try loading latest snapshot
@@ -245,7 +277,7 @@ def main() -> None:
             logger.error("No data found. Use --dry-run or --fetch")
             sys.exit(1)
 
-        run_pipeline(df)
+        run_pipeline(df, optimize=args.optimize)
 
 
 if __name__ == "__main__":

@@ -44,6 +44,8 @@ class WalkForwardResult:
 def run_walk_forward(
     df: pd.DataFrame,
     horizons: Optional[List[int]] = None,
+    params_override: Optional[Dict] = None,
+    feature_subset: Optional[List[str]] = None,
 ) -> WalkForwardResult:
     """
     Execute strict walk-forward validation.
@@ -51,6 +53,8 @@ def run_walk_forward(
     Args:
         df: Full DataFrame with features + labels (output of pipeline + labeler).
         horizons: Prediction horizons to evaluate (default from config).
+        params_override: Optional dict of LightGBM params to override defaults.
+        feature_subset: Optional list of feature columns to use (for pruning).
 
     Returns:
         WalkForwardResult with per-horizon reports.
@@ -58,7 +62,7 @@ def run_walk_forward(
     cfg = get_research_config()
     horizons = horizons or cfg.horizons
 
-    feature_cols = get_feature_columns(df)
+    feature_cols = feature_subset or get_feature_columns(df)
     total_bars = len(df)
 
     logger.info(
@@ -99,14 +103,31 @@ def run_walk_forward(
             X_test = extract_feature_matrix(test_df)
             y_test = test_df[label_col]
 
+            # --- Filter FLAT labels (-1) from training ---
+            train_mask = y_train != -1
+            X_train_filtered = X_train[train_mask]
+            y_train_filtered = y_train[train_mask]
+
+            if len(X_train_filtered) < 100:
+                logger.warning(
+                    "Fold %d [%dm]: Skipping — only %d tradeable training samples",
+                    fold_idx, h, len(X_train_filtered),
+                )
+                cursor += cfg.wf_step_bars
+                fold_idx += 1
+                continue
+
             # --- Fit regime model on training data only ---
             regime_model = gmm_regime.fit(train_df)
 
             # --- Add regime labels to test data ---
             test_with_regime = gmm_regime.add_regime_columns(test_df, regime_model)
 
-            # --- Train model ---
-            trained = model_trainer.train(X_train, y_train, horizon=h)
+            # --- Train model (on filtered non-FLAT data) ---
+            trained = model_trainer.train(
+                X_train_filtered, y_train_filtered, horizon=h,
+                params_override=params_override,
+            )
 
             # --- Predict on test ---
             probas = predict_proba(trained, X_test)
@@ -119,6 +140,12 @@ def run_walk_forward(
             price_moves = price_moves_raw[:valid_len]
             probas_valid = probas[:valid_len]
             y_valid = y_test.values[:valid_len]
+
+            # --- Filter FLAT labels (-1) from evaluation ---
+            eval_mask = y_valid != -1
+            price_moves = price_moves[eval_mask]
+            probas_valid = probas_valid[eval_mask]
+            y_valid = y_valid[eval_mask]
 
             # --- Compute PnL at default threshold (0.5) ---
             pnl = compute_trade_pnl(
@@ -146,7 +173,8 @@ def run_walk_forward(
                     importance_accum[feat].append(imp)
 
             # --- Accumulate regime-level data for threshold optimization ---
-            regimes = test_with_regime["regime"].values[:valid_len]
+            regimes_all = test_with_regime["regime"].values[:valid_len]
+            regimes = regimes_all[eval_mask]  # filter FLAT from regimes too
             for r in range(cfg.n_regimes):
                 r_mask = regimes == r
                 if r_mask.any():
@@ -184,13 +212,60 @@ def run_walk_forward(
         )
         all_thresholds[h] = regime_thresholds
 
-        # --- Concatenate all PnL ---
-        if fold_pnls:
-            all_pnl[h] = np.concatenate(fold_pnls)
-        else:
-            all_pnl[h] = np.array([])
+        # --- Regime-gated PnL recomputation ---
+        # Recompute PnL using per-regime optimal thresholds instead of flat 0.5
+        # Also filter out regimes with negative EV
+        positive_ev_regimes = {
+            rm.regime for rm in regime_metrics_list if rm.ev > 0
+        }
+        gated_pnl_parts = []
+        gated_n_trades = 0
+        gated_n_wins = 0
 
-        # --- Build overall report ---
+        for regime, data_list in sorted(regime_trade_data.items()):
+            if regime not in positive_ev_regimes:
+                logger.info(
+                    "  Regime %d [%dm]: SKIPPED (negative EV)", regime, h
+                )
+                continue
+
+            thresh = regime_thresholds.get(regime, 0.5)
+            all_preds = np.concatenate([d[0] for d in data_list])
+            all_moves = np.concatenate([d[2] for d in data_list])
+
+            mask = all_preds >= thresh
+            n = int(mask.sum())
+            if n > 0:
+                pnl_regime = all_moves[mask] - cfg.spread_price
+                gated_pnl_parts.append(pnl_regime)
+                gated_n_trades += n
+                gated_n_wins += int((pnl_regime > 0).sum())
+                logger.info(
+                    "  Regime %d [%dm]: %d trades @ thresh=%.2f, EV=%.6f, WR=%.1f%%",
+                    regime, h, n, thresh,
+                    float(np.mean(pnl_regime)),
+                    (pnl_regime > 0).sum() / n * 100,
+                )
+
+        # Use regime-gated PnL for Monte Carlo input
+        if gated_pnl_parts:
+            gated_pnl = np.concatenate(gated_pnl_parts)
+            gated_ev = float(np.mean(gated_pnl))
+            gated_wr = gated_n_wins / gated_n_trades if gated_n_trades > 0 else 0.0
+            all_pnl[h] = gated_pnl
+
+            logger.info(
+                "Horizon %dm REGIME-GATED: EV=%.6f, WR=%.1f%%, Trades=%d (from %d regimes)",
+                h, gated_ev, gated_wr * 100, gated_n_trades, len(positive_ev_regimes),
+            )
+        else:
+            # Fallback to original PnL if no positive-EV regimes
+            if fold_pnls:
+                all_pnl[h] = np.concatenate(fold_pnls)
+            else:
+                all_pnl[h] = np.array([])
+
+        # --- Build overall report (from fold metrics — ungated) ---
         overall = aggregate_fold_metrics(fold_metrics)
         reports[h] = HorizonReport(
             horizon=h,
