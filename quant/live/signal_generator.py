@@ -126,6 +126,7 @@ class SignalGenerator:
 
         # Signal log
         self.signal_log: list = []
+        self.last_processed_ts = None
 
         # Risk guardrails
         self.guardrails = RiskGuardrails(
@@ -300,11 +301,18 @@ class SignalGenerator:
         )
         self.guardrails.record_trade(trade)
 
-    def run_once(self) -> dict:
+    def run_once(self) -> Optional[dict]:
         """Fetch data and generate a single signal."""
         logger.info("Fetching recent bars...")
         df = self.fetch_recent_bars()
-        logger.info("Received %d bars, latest: %s", len(df), df.index[-1])
+        
+        latest_ts = df.index[-1]
+        if self.last_processed_ts == latest_ts:
+            logger.info("Data stale (ts=%s). Skipping signal generation.", latest_ts)
+            return None
+
+        self.last_processed_ts = latest_ts
+        logger.info("Received %d bars, latest: %s", len(df), latest_ts)
 
         sig = self.generate_signal(df)
 
