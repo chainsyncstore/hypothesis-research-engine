@@ -3,7 +3,7 @@ import asyncio
 import logging
 from pathlib import Path
 from quant.live.signal_generator import SignalGenerator
-from quant.config import CapitalAPIConfig
+from quant.config import CapitalAPIConfig, BinanceAPIConfig, get_research_config
 from quant.telebot.engine import AsyncEngine
 
 logger = logging.getLogger(__name__)
@@ -16,65 +16,88 @@ class BotManager:
     async def start_session(self, user_id: int, creds: dict, on_signal):
         """
         Start a trading session for a user.
-        creds: {email, key, password, mode='demo'|'live'}
+        creds: {email, api_key, password/api_secret, live, mode='crypto'|'fx'}
         """
         if user_id in self.sessions:
             logger.info(f"User {user_id} session already active.")
             return False
 
         live = creds.get('live', False)
-        base_url = "https://api-capital.backend-capital.com" if live else "https://demo-api-capital.backend-capital.com"
         mode_label = "LIVE" if live else "DEMO"
+        rcfg = get_research_config()
 
-        logger.info(f"Starting session for user {user_id} in {mode_label} mode.")
+        logger.info(f"Starting session for user {user_id} in {mode_label} mode ({rcfg.mode}).")
 
-        # Create user-specific config
-        api_cfg = CapitalAPIConfig(
-            api_key=creds['api_key'],
-            password=creds['password'],
-            identifier=creds['email'],
-            base_url=base_url
-        )
-        
         try:
-            # Initialize generator with user creds
-            gen = SignalGenerator(
-                model_dir=self.model_dir,
-                capital=10000.0, # TODO: User configurable capital
-                horizon=10,
-                api_config=api_cfg
-            )
-
-            # Test authentication BEFORE starting the loop
-            loop = asyncio.get_running_loop()
-            try:
-                await loop.run_in_executor(None, gen.client.authenticate)
-                gen._authenticated = True
-                logger.info(f"Auth OK for user {user_id} on {mode_label}")
-            except Exception as auth_err:
-                error_body = ""
-                if hasattr(auth_err, 'response') and auth_err.response is not None:
-                    try:
-                        error_body = auth_err.response.json().get('errorCode', '')
-                    except Exception:
-                        error_body = auth_err.response.text[:200]
-
-                if "null.accountId" in str(error_body):
-                    hint = (
-                        f"Your API key works on LIVE but not on DEMO. "
-                        f"Capital.com demo and live are separate environments. "
-                        f"Either create an API key in your demo account "
-                        f"(log in at demo-trading.capital.com) or use /start_live instead."
+            if rcfg.mode == "crypto":
+                # Crypto mode: Binance client (no auth needed for paper trading)
+                binance_cfg = None
+                if creds.get('binance_api_key') and creds.get('binance_api_secret'):
+                    base = "https://testnet.binancefuture.com" if not live else "https://fapi.binance.com"
+                    binance_cfg = BinanceAPIConfig(
+                        api_key=creds['binance_api_key'],
+                        api_secret=creds['binance_api_secret'],
+                        base_url=base,
                     )
-                    raise RuntimeError(hint) from auth_err
-                else:
-                    raise RuntimeError(
-                        f"Authentication failed on {mode_label}: {auth_err}. "
-                        f"Check your credentials with /setup."
-                    ) from auth_err
+
+                gen = SignalGenerator(
+                    model_dir=self.model_dir,
+                    capital=10000.0,
+                    horizon=4,
+                    binance_config=binance_cfg,
+                )
+                # No auth needed for read-only Binance data
+                gen._authenticated = True
+                logger.info(f"Binance client ready for user {user_id} (paper trading)")
+
+            else:
+                # FX mode: Capital.com
+                base_url = "https://api-capital.backend-capital.com" if live else "https://demo-api-capital.backend-capital.com"
+                api_cfg = CapitalAPIConfig(
+                    api_key=creds['api_key'],
+                    password=creds['password'],
+                    identifier=creds['email'],
+                    base_url=base_url
+                )
+
+                gen = SignalGenerator(
+                    model_dir=self.model_dir,
+                    capital=10000.0,
+                    horizon=5,
+                    api_config=api_cfg
+                )
+
+                # Test authentication BEFORE starting the loop
+                loop = asyncio.get_running_loop()
+                try:
+                    await loop.run_in_executor(None, gen.client.authenticate)
+                    gen._authenticated = True
+                    logger.info(f"Auth OK for user {user_id} on {mode_label}")
+                except Exception as auth_err:
+                    error_body = ""
+                    if hasattr(auth_err, 'response') and auth_err.response is not None:
+                        try:
+                            error_body = auth_err.response.json().get('errorCode', '')
+                        except Exception:
+                            error_body = auth_err.response.text[:200]
+
+                    if "null.accountId" in str(error_body):
+                        hint = (
+                            f"Your API key works on LIVE but not on DEMO. "
+                            f"Capital.com demo and live are separate environments. "
+                            f"Either create an API key in your demo account "
+                            f"(log in at demo-trading.capital.com) or use /start_live instead."
+                        )
+                        raise RuntimeError(hint) from auth_err
+                    else:
+                        raise RuntimeError(
+                            f"Authentication failed on {mode_label}: {auth_err}. "
+                            f"Check your credentials with /setup."
+                        ) from auth_err
 
             # Create async engine wrapper
-            engine = AsyncEngine(gen, on_signal=on_signal)
+            interval = 3600 if rcfg.mode == "crypto" else 60
+            engine = AsyncEngine(gen, on_signal=on_signal, interval=interval)
             await engine.start()
             self.sessions[user_id] = engine
             logger.info(f"Session started for user {user_id}")
@@ -102,6 +125,6 @@ class BotManager:
             del self.sessions[user_id]
             return False
         return True
-    
+
     def get_active_count(self) -> int:
         return len(self.sessions)

@@ -135,19 +135,29 @@ def load_raw(label: str) -> pd.DataFrame:
     return df
 
 
-def snapshot(df: pd.DataFrame, tag: Optional[str] = None) -> Path:
+def snapshot(
+    df: pd.DataFrame, tag: Optional[str] = None, prefix: Optional[str] = None
+) -> Path:
     """Create a versioned snapshot of the dataset.
 
     Args:
         df: OHLCV DataFrame to snapshot.
         tag: Optional descriptive tag.
+        prefix: Snapshot filename prefix (default: auto-detected from research mode).
 
     Returns:
         Path to snapshot file.
     """
+    from quant.config import get_research_config
+
     paths = get_path_config()
     ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    name = f"EURUSD_1m_snap_{ts}"
+
+    if prefix is None:
+        rcfg = get_research_config()
+        prefix = "BTCUSDT_1h_snap" if rcfg.mode == "crypto" else "EURUSD_1m_snap"
+
+    name = f"{prefix}_{ts}"
     if tag:
         name += f"_{tag}"
     fpath = paths.datasets_snapshots / f"{name}.parquet"
@@ -156,15 +166,27 @@ def snapshot(df: pd.DataFrame, tag: Optional[str] = None) -> Path:
     return fpath
 
 
-def load_latest_snapshot() -> Optional[pd.DataFrame]:
-    """Load the most recent dataset snapshot.
+def load_latest_snapshot(prefix: Optional[str] = None) -> Optional[pd.DataFrame]:
+    """Load the most recent dataset snapshot matching the current mode.
+
+    Args:
+        prefix: Explicit prefix filter. If None, auto-detected from research mode
+                (e.g. "BTCUSDT_1h_snap" for crypto, "EURUSD_1m_snap" for FX).
 
     Returns:
-        DataFrame or None if no snapshots exist.
+        DataFrame or None if no matching snapshots exist.
     """
+    from quant.config import get_research_config
+
     paths = get_path_config()
-    snaps = sorted(paths.datasets_snapshots.glob("*.parquet"))
+
+    if prefix is None:
+        rcfg = get_research_config()
+        prefix = "BTCUSDT_1h_snap" if rcfg.mode == "crypto" else "EURUSD_1m_snap"
+
+    snaps = sorted(paths.datasets_snapshots.glob(f"{prefix}*.parquet"))
     if not snaps:
+        logger.warning("No snapshots matching prefix '%s'", prefix)
         return None
     fpath = snaps[-1]
     df = pd.read_parquet(fpath, engine="pyarrow")

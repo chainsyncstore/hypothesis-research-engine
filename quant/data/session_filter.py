@@ -2,6 +2,7 @@
 Session filter — keeps only London + New York trading hours.
 
 Drops weekends and out-of-session bars.
+In crypto mode, passes through all bars (24/7 market).
 """
 
 from __future__ import annotations
@@ -10,14 +11,17 @@ import logging
 
 import pandas as pd
 
-from quant.config import get_session_config
+from quant.config import get_session_config, get_research_config
 
 logger = logging.getLogger(__name__)
 
 
 def filter_sessions(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Filter DataFrame to London + NY session hours only.
+    Filter DataFrame to session hours.
+
+    In crypto mode, passes through all bars unchanged (24/7 market).
+    In FX mode, keeps only London + NY session hours and drops weekends.
 
     Args:
         df: OHLCV DataFrame with UTC DatetimeIndex.
@@ -26,6 +30,11 @@ def filter_sessions(df: pd.DataFrame) -> pd.DataFrame:
         Filtered DataFrame containing only bars within session hours.
     """
     if df.empty:
+        return df
+
+    rcfg = get_research_config()
+    if rcfg.mode == "crypto":
+        logger.info("Session filter: crypto mode — all %d bars passed through", len(df))
         return df
 
     cfg = get_session_config()

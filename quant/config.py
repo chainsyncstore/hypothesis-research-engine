@@ -41,6 +41,19 @@ class CapitalAPIConfig:
     rate_limit_per_sec: int = 10
 
 
+@dataclass(frozen=True)
+class BinanceAPIConfig:
+    """Binance Futures REST API connection settings."""
+
+    api_key: str = field(default_factory=lambda: os.getenv("BINANCE_API_KEY", ""))
+    api_secret: str = field(default_factory=lambda: os.getenv("BINANCE_API_SECRET", ""))
+    base_url: str = "https://fapi.binance.com"
+    testnet_url: str = "https://testnet.binancefuture.com"
+    symbol: str = "BTCUSDT"
+    interval: str = "1h"
+    max_bars_per_request: int = 1500
+
+
 # ---------------------------------------------------------------------------
 # Session Configuration
 # ---------------------------------------------------------------------------
@@ -72,31 +85,38 @@ class SessionConfig:
 class ResearchConfig:
     """Core research parameters."""
 
-    # Spread (pips → price units for EURUSD: 1 pip = 0.0001)
-    spread_pips: float = 0.8
-    spread_price: float = 0.00008  # 0.8 * 0.0001
-    
+    # Mode: "fx" for EURUSD 1-min, "crypto" for BTC/ETH 1H
+    mode: str = "crypto"
+
+    # Spread / transaction cost
+    # FX: 0.8 pips = 0.00008 price units
+    # Crypto: 0.04% taker fee per side = 0.08% round trip (set dynamically)
+    spread_pips: float = 0.0
+    spread_price: float = 0.0  # For crypto, computed dynamically from fee_rate
+    taker_fee_rate: float = 0.0004  # 0.04% per side (Binance default)
+
     # Pessimistic Execution (Stop Loss)
-    stop_loss_pips: float = 10.0
-    stop_loss_price: float = 0.0010  # 10.0 * 0.0001
+    stop_loss_pips: float = 0.0
+    stop_loss_pct: float = 0.02  # 2% stop loss for crypto
 
-    # Horizons to evaluate
-    horizons: List[int] = field(default_factory=lambda: [3, 5, 10])
+    # Horizons to evaluate (in bars: 1H bars for crypto)
+    horizons: List[int] = field(default_factory=lambda: [1, 4, 12])
 
-    # Walk-forward windows (in bars = 1-minute candles)
-    wf_train_bars: int = 15_000
-    wf_test_bars: int = 3_000
-    wf_step_bars: int = 3_000
-    wf_calibration_frac: float = 0.20  # last 20% of train for calibration
+    # Walk-forward windows (in bars)
+    # Crypto 1H: 2000 bars = ~83 days train, 500 bars = ~21 days test
+    wf_train_bars: int = 2_000
+    wf_test_bars: int = 500
+    wf_step_bars: int = 500
+    wf_calibration_frac: float = 0.20
 
     # Minimum data requirement
-    min_total_bars: int = 33_000
+    min_total_bars: int = 8_000  # ~333 days of 1H bars
 
     # GMM regime count
-    n_regimes: int = 4
+    n_regimes: int = 5
 
     # Feature budget
-    max_features: int = 55
+    max_features: int = 90
 
     # Model hyperparameters
     lgbm_n_estimators: int = 500
@@ -114,9 +134,11 @@ class ResearchConfig:
     threshold_max: float = 0.80
     threshold_step: float = 0.05
 
-    # Dead zone for ternary labeling (moves smaller than this are FLAT)
-    dead_zone_pips: float = 0.8
-    dead_zone_price: float = 0.00008  # 0.8 * 0.0001
+    # Dead zone for ternary labeling
+    # Crypto: percentage-based (0.10% of price)
+    dead_zone_pct: float = 0.0010
+    dead_zone_pips: float = 0.0  # unused in crypto mode
+    dead_zone_price: float = 0.0  # computed dynamically in crypto mode
 
 
 # ---------------------------------------------------------------------------
@@ -144,6 +166,7 @@ class PathConfig:
 # Singleton accessors
 # ---------------------------------------------------------------------------
 _api_cfg: CapitalAPIConfig | None = None
+_binance_cfg: BinanceAPIConfig | None = None
 _session_cfg: SessionConfig | None = None
 _research_cfg: ResearchConfig | None = None
 _path_cfg: PathConfig | None = None
@@ -154,6 +177,13 @@ def get_api_config() -> CapitalAPIConfig:
     if _api_cfg is None:
         _api_cfg = CapitalAPIConfig()
     return _api_cfg
+
+
+def get_binance_config() -> BinanceAPIConfig:
+    global _binance_cfg
+    if _binance_cfg is None:
+        _binance_cfg = BinanceAPIConfig()
+    return _binance_cfg
 
 
 def get_session_config() -> SessionConfig:

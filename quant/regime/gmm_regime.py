@@ -23,14 +23,34 @@ from quant.config import get_research_config
 
 logger = logging.getLogger(__name__)
 
-# Feature columns used as GMM input
-REGIME_INPUT_FEATURES = [
+# Base regime features (always available from OHLCV)
+_BASE_REGIME_FEATURES = [
     "atr_14",
     "rolling_std_20",
     "roc_5",
     "ema_slope_5",
     "vol_ratio",
 ]
+
+# Additional regime features for crypto mode
+_CRYPTO_REGIME_FEATURES = [
+    "funding_rate_zscore",
+    "oi_zscore",
+    "taker_buy_ratio_ma8",
+]
+
+
+def _get_regime_features(df: pd.DataFrame) -> list[str]:
+    """Select regime input features based on available columns."""
+    features = list(_BASE_REGIME_FEATURES)
+    for f in _CRYPTO_REGIME_FEATURES:
+        if f in df.columns:
+            features.append(f)
+    return features
+
+
+# Backward-compatible alias
+REGIME_INPUT_FEATURES = _BASE_REGIME_FEATURES
 
 
 @dataclass
@@ -40,12 +60,14 @@ class RegimeModel:
     gmm: GaussianMixture
     scaler: StandardScaler
     n_regimes: int
-    input_features: list = field(default_factory=lambda: list(REGIME_INPUT_FEATURES))
+    input_features: list = field(default_factory=lambda: list(_BASE_REGIME_FEATURES))
 
 
 def fit(df: pd.DataFrame, n_regimes: Optional[int] = None) -> RegimeModel:
     """
     Fit a GMM regime model on training data.
+
+    Automatically includes crypto-specific features when available.
 
     Args:
         df: DataFrame with feature columns (output of feature pipeline).
@@ -57,7 +79,8 @@ def fit(df: pd.DataFrame, n_regimes: Optional[int] = None) -> RegimeModel:
     cfg = get_research_config()
     n = n_regimes or cfg.n_regimes
 
-    X = df[REGIME_INPUT_FEATURES].values
+    input_features = _get_regime_features(df)
+    X = df[input_features].values
 
     # Standardize
     scaler = StandardScaler()
@@ -74,13 +97,14 @@ def fit(df: pd.DataFrame, n_regimes: Optional[int] = None) -> RegimeModel:
     gmm.fit(X_scaled)
 
     logger.info(
-        "Fitted GMM with %d regimes on %d samples (BIC: %.1f)",
+        "Fitted GMM with %d regimes on %d samples (BIC: %.1f, features: %s)",
         n,
         len(X_scaled),
         gmm.bic(X_scaled),
+        input_features,
     )
 
-    return RegimeModel(gmm=gmm, scaler=scaler, n_regimes=n)
+    return RegimeModel(gmm=gmm, scaler=scaler, n_regimes=n, input_features=input_features)
 
 
 def predict(model: RegimeModel, df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:

@@ -157,46 +157,31 @@ def run_walk_forward(
             price_moves_raw = test_df["close"].shift(-h).values - test_df["close"].values
 
             # Trim to valid rows (drop NaN from forward shift at tail)
+            valid_len = len(test_df) - h
+
+            # Initialize eval mask (exclude FLAT labels)
+            eval_mask = y_test.values[:valid_len] != -1
+
             # --- Pessimistic Execution: Check Intra-bar Stop Loss ---
-            # If Low drops below SL within h bars, we default to -SL loss.
-            # rolling(h).min() covers [t-h+1, t]. shift(-h) aligns it to [t+1, t+h].
-            # Note: This is an approximation. Ideally we check High/Low path.
-            # But rolling min is "worst case lowest price" in the future window.
             if "low" in test_df.columns:
                 future_lows = test_df["low"].rolling(window=h).min().shift(-h).values
-                # Align with valid_len (which is len(test_df) - h)
                 future_lows = future_lows[:valid_len]
-                
-                # Check against SL
-                # Entry is at Close[t]
                 entry_prices = test_df["close"].values[:valid_len]
-                sl_price = cfg.stop_loss_price
-                
-                # Mask where Low < Entry - SL
-                sl_hit_mask = future_lows < (entry_prices - sl_price)
-                
-                # Verify length match
-                # price_moves_raw length is len(test_df) (with NaNs at end).
-                # We need to slice price_moves_raw to valid_len first?
-                # Line 159: valid_len = len(test_df) - h
-                # price_moves = price_moves_raw[:valid_len]
-                
-                # Apply SL to price_moves (in-place or copy)
-                # price_moves is currently derived from price_moves_raw[:valid_len]
-                
-                # Logic: If SL hit, PnL = -SL (ignoring spread for a moment, spread is subtracted later)
-                # Wait, price_move is (Exit - Entry).
-                # If SL hit, Exit = Entry - SL. So price_move = -SL.
-                
-                # We apply this to the generic price_moves vector.
-                # This assumes we are LONG. (Since we predict P(Up)).
-                # If we were Shorting, we'd check High > Entry + SL.
-                
+
+                # Compute stop loss in price units (percentage for crypto, absolute for FX)
+                if cfg.mode == "crypto" and cfg.stop_loss_pct > 0:
+                    sl_prices = entry_prices * cfg.stop_loss_pct
+                elif cfg.stop_loss_pips > 0:
+                    sl_prices = np.full(valid_len, cfg.stop_loss_pips * 0.0001)
+                else:
+                    sl_prices = np.zeros(valid_len)
+
+                sl_hit_mask = future_lows < (entry_prices - sl_prices)
+
                 price_moves = price_moves_raw[:valid_len].copy()
-                n_sl = sl_hit_mask.sum()
+                n_sl = int(sl_hit_mask.sum())
                 if n_sl > 0:
-                    # logger.info(f"Fold {fold_idx}: Pessimistic Execution applied to {n_sl} bars.")
-                    price_moves[sl_hit_mask] = -sl_price
+                    price_moves[sl_hit_mask] = -sl_prices[sl_hit_mask]
             else:
                 price_moves = price_moves_raw[:valid_len]
             
@@ -213,7 +198,7 @@ def run_walk_forward(
                 # threshold is float
                 if vol_guard.threshold is not None:
                     # vectorized numpy comparison
-                    vol_vals = test_df["realized_vol_5"].values
+                    vol_vals = test_df["realized_vol_5"].values[:valid_len]
                     is_safe = vol_vals <= vol_guard.threshold
                     
                     # Log how many blocked
@@ -230,18 +215,13 @@ def run_walk_forward(
             y_valid = y_valid[eval_mask]
 
             # --- Compute PnL with Dynamic Cost Model ---
-            # Extract volatility for cost estimation (default to 1.0 if missing)
-            # We need the volatility at the TIME OF ENTRY (cursor + i)
-            # The test_df has realized_vol_5 (lagged? no, realized is usually trailing)
-            # We use the row's volatility to penalize entering during high vol.
-            
-            # Simple vectorization is hard because cost varies per row.
-            # But we can vectorize if we build a cost vector.
-            
-            # Instantiate Cost Model (TODO: Move config to research config)
-            from quant.risk.cost_model import VolatilityAdjustedCostModel
-            cost_model = VolatilityAdjustedCostModel(base_spread=cfg.spread_price)
-            cost_model.fit(train_df) # Fit on training data to get baseline vol
+            from quant.risk.cost_model import VolatilityAdjustedCostModel, PercentageCostModel
+
+            if cfg.mode == "crypto":
+                cost_model = PercentageCostModel(fee_rate=cfg.taker_fee_rate)
+            else:
+                cost_model = VolatilityAdjustedCostModel(base_spread=cfg.spread_price)
+            cost_model.fit(train_df)
             
             # Calculate cost for every bar in test set
             # We use a vectorized approach for speed if possible, or apply

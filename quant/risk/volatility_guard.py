@@ -13,21 +13,24 @@ class VolatilityGuard:
     3. Block if current vol > Nth percentile (e.g. 95th).
     """
     
-    def __init__(self, window_bars: int = 60, percentile: float = 0.95):
+    def __init__(self, window_bars: int = 60, percentile: float = 0.99,
+                 min_samples: int = 1000):
         self.window_bars = window_bars
         self.percentile = percentile
+        self.min_samples = min_samples
         self.threshold: Optional[float] = None
-        
+
     def fit(self, df: pd.DataFrame, vol_col: str = "realized_vol_5"):
         """Learn the safe volatility threshold from history."""
         if vol_col not in df.columns:
-            # Fallback if specific vol col missing, compute simple rolling std
-            # meaningful only if df has 'close'
             return
-            
+
         vol_values = df[vol_col].dropna()
-        if len(vol_values) > 0:
+        if len(vol_values) >= self.min_samples:
             self.threshold = float(vol_values.quantile(self.percentile))
+        else:
+            # Not enough data for reliable percentile — disable guard
+            self.threshold = None
             
     def check(self, current_vol: float) -> bool:
         """

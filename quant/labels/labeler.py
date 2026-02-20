@@ -41,10 +41,16 @@ def add_labels(df: pd.DataFrame, horizons: List[int] | None = None) -> pd.DataFr
 
     cfg = get_research_config()
     horizons = horizons or cfg.horizons
-    dead_zone = cfg.dead_zone_price
 
     out = df.copy()
     max_horizon = max(horizons)
+
+    # Determine dead zone: percentage-based for crypto, absolute for FX
+    if cfg.mode == "crypto" and cfg.dead_zone_pct > 0:
+        # Dynamic dead zone: percentage of close price per bar
+        dead_zone_series = out["close"] * cfg.dead_zone_pct
+    else:
+        dead_zone_series = cfg.dead_zone_price
 
     for h in horizons:
         future_close = out["close"].shift(-h)
@@ -52,8 +58,8 @@ def add_labels(df: pd.DataFrame, horizons: List[int] | None = None) -> pd.DataFr
 
         # Ternary label: 1=UP, 0=DOWN, -1=FLAT (dead zone)
         label = pd.Series(-1, index=out.index, dtype=int)
-        label[move > dead_zone] = 1
-        label[move < -dead_zone] = 0
+        label[move > dead_zone_series] = 1
+        label[move < -dead_zone_series] = 0
         out[f"label_{h}m"] = label
 
     # Drop rows where labels are unavailable (tail)
@@ -65,13 +71,14 @@ def add_labels(df: pd.DataFrame, horizons: List[int] | None = None) -> pd.DataFr
         n_down = (labels == 0).sum()
         n_flat = (labels == -1).sum()
         total = len(labels)
+        dz_info = f"dead_zone_pct={cfg.dead_zone_pct}" if cfg.mode == "crypto" else f"dead_zone={cfg.dead_zone_price:.5f}"
         logger.info(
-            "Label %dm: %d rows — UP=%.1f%%, DOWN=%.1f%%, FLAT=%.1f%% (dead zone=%.5f)",
+            "Label %dh: %d rows — UP=%.1f%%, DOWN=%.1f%%, FLAT=%.1f%% (%s)",
             h, total,
             n_up / total * 100,
             n_down / total * 100,
             n_flat / total * 100,
-            dead_zone,
+            dz_info,
         )
 
     return out

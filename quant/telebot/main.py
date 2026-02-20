@@ -142,17 +142,16 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "/start - Check account status\n"
             "/help - Show this menu\n\n"
             "Setup\n"
-            "/setup email key pass - Connect Capital.com\n"
-            "  (no brackets - just paste values separated by spaces)\n\n"
+            "/setup key secret - Connect Binance (optional for paper)\n"
+            "  Paper trading works without credentials!\n\n"
             "Trading\n"
-            "/start_demo - Start PAPER trading\n"
+            "/start_demo - Start PAPER trading (BTCUSDT 1H)\n"
             "/start_live - Start REAL trading\n"
             "/stop - Stop execution\n"
             "/status - Check if running\n"
             "/stats - View live performance\n\n"
-            "NOTE: Capital.com demo and live use separate API keys.\n"
-            "Create your API key inside the demo or live platform\n"
-            "matching the mode you want to trade in."
+            "System trades BTCUSDT perpetual futures at 1H timeframe.\n"
+            "Paper trading uses real market data but logs trades only."
         )
         
         user_id = update.effective_user.id
@@ -168,40 +167,50 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def _start_engine(update: Update, context: ContextTypes.DEFAULT_TYPE, live: bool):
     if not MANAGER: return
     user_id = update.effective_user.id
-    
+
     session = SessionLocal()
     user = session.query(User).filter_by(telegram_id=user_id).first()
-    
+
     if not user or user.status != 'active':
         await update.message.reply_text("⛔ Account not approved." + FOOTER)
         session.close()
         return
-        
+
     ctx = user.context
-    if not (ctx.capital_email and ctx.capital_api_key and ctx.capital_password):
-        await update.message.reply_text("❌ Credentials missing. Run /setup first." + FOOTER)
-        session.close()
-        return
-        
-    # Decrypt
+    from quant.config import get_research_config
+    rcfg = get_research_config()
+
+    # Build credentials dict based on mode
     try:
-        creds = {
-            'email': ctx.capital_email,
-            'api_key': CRYPTO.decrypt(ctx.capital_api_key),
-            'password': CRYPTO.decrypt(ctx.capital_password),
-            'live': live
-        }
+        if rcfg.mode == "crypto":
+            # Crypto: no credentials needed for paper trading (read-only API)
+            creds = {
+                'live': live,
+                'binance_api_key': CRYPTO.decrypt(ctx.binance_api_key) if ctx.binance_api_key else '',
+                'binance_api_secret': CRYPTO.decrypt(ctx.binance_api_secret) if ctx.binance_api_secret else '',
+            }
+        else:
+            # FX: Capital.com credentials required
+            if not (ctx.capital_email and ctx.capital_api_key and ctx.capital_password):
+                await update.message.reply_text("❌ Credentials missing. Run /setup first." + FOOTER)
+                session.close()
+                return
+            creds = {
+                'email': ctx.capital_email,
+                'api_key': CRYPTO.decrypt(ctx.capital_api_key),
+                'password': CRYPTO.decrypt(ctx.capital_password),
+                'live': live
+            }
     except Exception as e:
         logger.error(f"Decryption failed for user {user_id}: {e}")
         await update.message.reply_text("❌ Decryption failed. Re-run /setup." + FOOTER)
         session.close()
         return
-        
-    # Update preference
+
     if ctx.live_mode != live:
         ctx.live_mode = live
         session.commit()
-        
+
     session.close()
 
     mode_str = "LIVE 🔴" if live else "DEMO 🟢"
@@ -336,58 +345,92 @@ async def approve(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def setup(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     args = context.args
-    
-    if len(args) < 3:
-        await update.message.reply_text(
-            "⚠️ Usage:\n"
-            "`/setup your@email.com YOUR_API_KEY YOUR_PASSWORD`\n\n"
-            "⚠️ Do NOT include < > brackets — just paste the values directly.\n\n"
-            "**Security Note:** Your keys are encrypted." + FOOTER
-        )
-        return
+    from quant.config import get_research_config
+    rcfg = get_research_config()
 
-    email = args[0]
-    api_key = args[1]
-    password = args[2] # In reality, user might send multiple words, but Capital passwords usually don't have spaces or we assume last arg
-    
-    # Encrypt
-    enc_key = CRYPTO.encrypt(api_key)
-    enc_pass = CRYPTO.encrypt(password)
-    
-    session = SessionLocal()
-    user = session.query(User).filter_by(telegram_id=user_id).first()
-    if user:
-        if not user.context:
-            user.context = UserContext(telegram_id=user_id)
-        
-        user.context.capital_email = email
-        user.context.capital_api_key = enc_key
-        user.context.capital_password = enc_pass
-        session.commit()
-        await update.message.reply_text("✅ **Credentials Saved!**\n\nYou can now start trading.\nRun: `/start_demo` or `/start_live`" + FOOTER)
+    if rcfg.mode == "crypto":
+        # Crypto mode: optional Binance API key + secret (for future live trading)
+        # Paper trading works without credentials
+        if len(args) < 2:
+            await update.message.reply_text(
+                "**Crypto Mode Setup**\n\n"
+                "For paper trading, no setup needed!\n"
+                "Just run `/start_demo`\n\n"
+                "For future live trading:\n"
+                "`/setup BINANCE_API_KEY BINANCE_API_SECRET`\n\n"
+                "**Security Note:** Your keys are encrypted." + FOOTER
+            )
+            return
+
+        api_key = args[0]
+        api_secret = args[1]
+
+        session = SessionLocal()
+        user = session.query(User).filter_by(telegram_id=user_id).first()
+        if user:
+            if not user.context:
+                user.context = UserContext(telegram_id=user_id)
+            user.context.binance_api_key = CRYPTO.encrypt(api_key)
+            user.context.binance_api_secret = CRYPTO.encrypt(api_secret)
+            session.commit()
+            await update.message.reply_text(
+                "✅ **Binance Credentials Saved!**\n\n"
+                "Run: `/start_demo` or `/start_live`" + FOOTER
+            )
+        else:
+            await update.message.reply_text("⛔ User not found." + FOOTER)
+        session.close()
     else:
-        await update.message.reply_text("⛔ User not found." + FOOTER)
-    session.close()
+        # FX mode: Capital.com credentials
+        if len(args) < 3:
+            await update.message.reply_text(
+                "⚠️ Usage:\n"
+                "`/setup your@email.com YOUR_API_KEY YOUR_PASSWORD`\n\n"
+                "⚠️ Do NOT include < > brackets — just paste the values directly.\n\n"
+                "**Security Note:** Your keys are encrypted." + FOOTER
+            )
+            return
+
+        email = args[0]
+        api_key = args[1]
+        password = args[2]
+
+        session = SessionLocal()
+        user = session.query(User).filter_by(telegram_id=user_id).first()
+        if user:
+            if not user.context:
+                user.context = UserContext(telegram_id=user_id)
+            user.context.capital_email = email
+            user.context.capital_api_key = CRYPTO.encrypt(api_key)
+            user.context.capital_password = CRYPTO.encrypt(password)
+            session.commit()
+            await update.message.reply_text(
+                "✅ **Credentials Saved!**\n\n"
+                "Run: `/start_demo` or `/start_live`" + FOOTER
+            )
+        else:
+            await update.message.reply_text("⛔ User not found." + FOOTER)
+        session.close()
 
 async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not MANAGER: return
     user_id = update.effective_user.id
-    
+
     if not MANAGER.is_running(user_id):
         await update.message.reply_text("⚠️ Engine not running." + FOOTER)
         return
-        
+
     engine = MANAGER.sessions[user_id]
     gen = engine.gen
+    is_crypto = gen.mode == "crypto"
 
-    # Determine mode
-    base_url = gen.client._cfg.base_url.lower()
-    mode_label = "LIVE 🔴" if "api-capital" in base_url and "demo" not in base_url else "DEMO 🟢"
+    mode_label = "PAPER CRYPTO 🟡" if is_crypto else "DEMO 🟢"
+    if gen.mode != "crypto" and gen.client:
+        base_url = gen.client._cfg.base_url.lower()
+        mode_label = "LIVE 🔴" if "api-capital" in base_url and "demo" not in base_url else "DEMO 🟢"
 
-    # Win rate stats
     wr = gen.get_win_rate_stats()
 
-    # Recent signals (always available even if API is down)
     recent = gen.signal_log[-5:] if gen.signal_log else []
     if recent:
         trade_lines = []
@@ -398,37 +441,39 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 tag = " W"
             elif outcome == "loss":
                 tag = " L"
+            price_fmt = f"{s['close_price']:.2f}" if is_crypto else f"{s['close_price']:.5f}"
             trade_lines.append(
-                f"- {s['signal']} @ {s['close_price']:.5f} (P={s['probability']:.3f}){tag}"
+                f"- {s['signal']} @ {price_fmt} (P={s['probability']:.3f}){tag}"
             )
         trade_str = "\n".join(trade_lines)
     else:
         trade_str = "(No signals yet)"
 
-    # Try to fetch live account data
-    balance_str = "N/A"
-    pnl_str = "N/A"
-    pos_count = "N/A"
-    try:
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, gen._ensure_authenticated)
-        acct = await loop.run_in_executor(None, gen.client.get_accounts)
-        positions = await loop.run_in_executor(None, gen.client.get_positions)
+    # Account data (only for FX mode with Capital.com)
+    balance_str = "Paper" if is_crypto else "N/A"
+    pnl_str = wr.get('total_pnl', 'N/A')
+    pos_count = "Paper" if is_crypto else "N/A"
 
-        balance = acct.get('balance', {}).get('balance', 0) if isinstance(acct.get('balance'), dict) else acct.get('balance', 0)
-        total_pnl = sum([p.get('position', {}).get('profit', 0) for p in positions])
-        balance_str = f"${balance:,.2f}"
-        pnl_str = f"${total_pnl:,.2f}"
-        pos_count = str(len(positions))
-    except Exception as e:
-        logger.warning(f"Could not fetch account data: {e}")
+    if not is_crypto and gen.client:
+        try:
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(None, gen._ensure_authenticated)
+            acct = await loop.run_in_executor(None, gen.client.get_accounts)
+            positions = await loop.run_in_executor(None, gen.client.get_positions)
 
-    # Build win rate section
+            balance = acct.get('balance', {}).get('balance', 0) if isinstance(acct.get('balance'), dict) else acct.get('balance', 0)
+            total_pnl = sum([p.get('position', {}).get('profit', 0) for p in positions])
+            balance_str = f"${balance:,.2f}"
+            pnl_str = f"${total_pnl:,.2f}"
+            pos_count = str(len(positions))
+        except Exception as e:
+            logger.warning(f"Could not fetch account data: {e}")
+
     if wr["evaluated"] > 0:
         wr_section = (
             f"\n**Win Rate**\n"
             f"Win Rate: {wr['win_rate']}% ({wr['wins']}W / {wr['losses']}L)\n"
-            f"Total Pips: {wr['total_pips']:+.1f}\n"
+            f"PnL: {wr.get('total_pnl', 'N/A')}\n"
             f"Evaluated: {wr['evaluated']} | Pending: {wr['pending']}\n"
         )
     else:
@@ -438,10 +483,11 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             wr_section = ""
 
+    instrument = "BTCUSDT 1H" if is_crypto else "EURUSD 1m"
     msg = (
-        f"📊 **{mode_label} Statistics**\n\n"
+        f"📊 **{mode_label} Statistics** ({instrument})\n\n"
         f"💰 **Balance:** {balance_str}\n"
-        f"📈 **PnL (Open):** {pnl_str}\n"
+        f"📈 **PnL:** {pnl_str}\n"
         f"🟢 **Positions:** {pos_count}\n"
         f"{wr_section}\n"
         f"**Signals:** {wr['total_signals']} total "

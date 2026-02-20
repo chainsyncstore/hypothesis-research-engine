@@ -18,10 +18,14 @@ class User(Base):
 class UserContext(Base):
     __tablename__ = 'user_context'
     telegram_id = Column(Integer, ForeignKey('users.telegram_id'), primary_key=True)
+    # Capital.com credentials (FX mode)
     capital_email = Column(String)
-    capital_api_key = Column(String) # Encrypted
-    capital_password = Column(String) # Encrypted
+    capital_api_key = Column(String)
+    capital_password = Column(String)
+    # Binance credentials (crypto mode - for future live trading)
+    binance_api_key = Column(String)
+    binance_api_secret = Column(String)
     live_mode = Column(Boolean, default=False)
     is_active = Column(Boolean, default=False)
-    
+
     user = relationship("User", back_populates="context")

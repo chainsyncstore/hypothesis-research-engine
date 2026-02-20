@@ -21,13 +21,18 @@ from quant.features import (
     session_context,
     cross_timeframe,
     spread_features,
+    order_flow,
+    funding_rate,
+    open_interest,
+    liquidation,
+    crypto_session,
 )
 
 logger = logging.getLogger(__name__)
 
-# Ordered list of feature modules
+# Ordered list of feature modules — OHLCV-based first, then crypto-specific
 # Note: cross_timeframe must come after trend (uses EMA columns)
-_FEATURE_MODULES = [
+_OHLCV_MODULES = [
     momentum,
     volatility,
     candle_geometry,
@@ -35,16 +40,32 @@ _FEATURE_MODULES = [
     volume,
     time_encoding,
     microstructure,
-    session_context,
     cross_timeframe,
+]
+
+# FX-only modules (session windows, bid/ask spread)
+_FX_MODULES = [
+    session_context,
     spread_features,
 ]
 
-# Columns that are NOT features (original OHLCV + intermediate EMAs + labels + regime + bid/ask/spread)
+# Crypto-specific modules (order flow, funding, OI, liquidation, session)
+_CRYPTO_MODULES = [
+    order_flow,
+    funding_rate,
+    open_interest,
+    liquidation,
+    crypto_session,
+]
+
+# Columns that are NOT features (raw data + intermediates + labels + regime)
 _NON_FEATURE_COLS = {
-    "open", "high", "low", "close", "volume", 
+    "open", "high", "low", "close", "volume",
     "ema_5", "ema_20", "ema_50",
     "bid_close", "ask_close", "spread",
+    "taker_buy_volume", "taker_sell_volume",
+    "funding_rate_raw",
+    "open_interest", "open_interest_value",
 }
 _NON_FEATURE_PREFIXES = ("label_", "regime")
 
@@ -52,6 +73,8 @@ _NON_FEATURE_PREFIXES = ("label_", "regime")
 def build_features(df: pd.DataFrame) -> pd.DataFrame:
     """
     Apply all feature modules sequentially and validate.
+
+    Selects modules based on research mode (crypto vs fx).
 
     Args:
         df: Raw OHLCV DataFrame (session-filtered).
@@ -65,7 +88,15 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     cfg = get_research_config()
     result = df.copy()
 
-    for mod in _FEATURE_MODULES:
+    # OHLCV-based modules are always used
+    modules = list(_OHLCV_MODULES)
+
+    if cfg.mode == "crypto":
+        modules.extend(_CRYPTO_MODULES)
+    else:
+        modules.extend(_FX_MODULES)
+
+    for mod in modules:
         result = mod.compute(result)
 
     # Drop warmup NaN rows

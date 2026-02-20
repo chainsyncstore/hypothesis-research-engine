@@ -29,9 +29,10 @@ from typing import Dict, Optional
 import numpy as np
 import pandas as pd
 
-from quant.config import get_research_config, CapitalAPIConfig
+from quant.config import get_research_config, CapitalAPIConfig, BinanceAPIConfig
 from quant.risk.volatility_guard import VolatilityGuard
 from quant.data.capital_client import CapitalClient
+from quant.data.binance_client import BinanceClient
 from quant.data.session_filter import filter_sessions
 from quant.features.pipeline import build_features, get_feature_columns
 from quant.models.trainer import TrainedModel, load_model
@@ -57,21 +58,28 @@ REGIME_LOOKBACK = 500
 class SignalGenerator:
     """Live signal generator with regime-gated trading, position sizing, and risk guardrails."""
 
-    def __init__(self, model_dir: Path, capital: float = 10000.0, horizon: int = 10, api_config: Optional[CapitalAPIConfig] = None):
+    def __init__(self, model_dir: Path, capital: float = 10000.0, horizon: int = 10,
+                 api_config: Optional[CapitalAPIConfig] = None,
+                 binance_config: Optional[BinanceAPIConfig] = None):
         self.model_dir = model_dir
         self.capital = capital
         self.horizon = horizon
         self.api_config = api_config
+        self.binance_config = binance_config
 
         # Load config
         with open(model_dir / "config.json") as f:
             self.config = json.load(f)
 
+        # Determine mode from model config (crypto vs fx)
+        self.mode = self.config.get("mode", "fx")
+        self.taker_fee_rate = self.config.get("taker_fee_rate", 0.0004)
+
         # Validate horizon
         available_horizons = self.config.get("horizons", [])
         if available_horizons and self.horizon not in available_horizons:
             logger.warning(
-                "Horizon %dm not found in config horizons %s. Proceeding anyway...",
+                "Horizon %dh not found in config horizons %s. Proceeding anyway...",
                 self.horizon, available_horizons
             )
 
@@ -79,12 +87,9 @@ class SignalGenerator:
         self.spread: float = self.config["spread"]
 
         # Parse regime config for specific horizon
-        # Config structure: "regime_config": {"10": {"0": {...}, ...}}
         h_str = str(self.horizon)
-        
-        # Handle both old (single) and new (multi) config structures
+
         if "regime_config" in self.config and h_str in self.config["regime_config"]:
-             # New structure
             self.regime_config = {
                 int(k): v for k, v in self.config["regime_config"][h_str].items()
             }
@@ -92,7 +97,6 @@ class SignalGenerator:
                 int(k): v for k, v in self.config["regime_thresholds"][h_str].items()
             }
         else:
-            # Fallback to old structure or simple dict
             self.regime_config = {
                 int(k): v for k, v in self.config.get("regime_config", {}).items()
             }
@@ -107,12 +111,11 @@ class SignalGenerator:
         # Load models
         model_path = model_dir / f"model_{self.horizon}m.joblib"
         if not model_path.exists():
-             # Fallback for old single-model name
-             fallback = model_dir / "lgbm_model.joblib"
-             if fallback.exists():
-                 model_path = fallback
-             else:
-                 raise FileNotFoundError(f"Model not found: {model_path}")
+            fallback = model_dir / "lgbm_model.joblib"
+            if fallback.exists():
+                model_path = fallback
+            else:
+                raise FileNotFoundError(f"Model not found: {model_path}")
 
         logger.info("Loading LightGBM model from %s", model_path)
         self.model: TrainedModel = load_model(model_path)
@@ -122,8 +125,13 @@ class SignalGenerator:
             model_dir / "regime_model.joblib"
         )
 
-        # API client
-        self.client = CapitalClient(config=self.api_config)
+        # API client — Binance for crypto, Capital.com for FX
+        if self.mode == "crypto":
+            self.binance_client = BinanceClient(config=self.binance_config)
+            self.client = None
+        else:
+            self.client = CapitalClient(config=self.api_config)
+            self.binance_client = None
         self._authenticated = False
 
         # Signal log
@@ -159,6 +167,10 @@ class SignalGenerator:
             )
 
     def _ensure_authenticated(self) -> None:
+        if self.mode == "crypto":
+            # Binance read-only endpoints don't need auth
+            self._authenticated = True
+            return
         if not self._authenticated:
             self.client.authenticate()
             self._authenticated = True
@@ -167,38 +179,56 @@ class SignalGenerator:
         """Fetch recent bars for feature computation."""
         self._ensure_authenticated()
         date_to = datetime.now(timezone.utc)
-        # Fetch ~14 hours of 1-min bars (~840 bars, fits in 1 API page).
-        # We need WARMUP_BARS(200) + REGIME_LOOKBACK(500) = 700 bars.
-        date_from = date_to - timedelta(hours=14)
 
-        df = self.client.fetch_historical(date_from, date_to)
+        if self.mode == "crypto":
+            # Fetch 700 bars of 1H data (~29 days, fits in 1 Binance request)
+            date_from = date_to - timedelta(hours=n_bars)
+
+            ohlcv = self.binance_client.fetch_historical(date_from, date_to)
+            if ohlcv.empty:
+                raise RuntimeError("No OHLCV data from Binance")
+
+            # Fetch supplementary data for feature computation
+            funding = self.binance_client.fetch_funding_rates(date_from, date_to)
+            oi = self.binance_client.fetch_open_interest(date_from, date_to)
+            df = BinanceClient.merge_supplementary(ohlcv, funding, oi)
+        else:
+            # FX mode: 14 hours of 1-min bars
+            date_from = date_to - timedelta(hours=14)
+            df = self.client.fetch_historical(date_from, date_to)
+
         if df.empty:
             raise RuntimeError("No data received from API")
 
         return df
 
-    def _compute_position_size(self, regime: int) -> dict:
+    def _compute_position_size(self, regime: int, close_price: float = 0.0) -> dict:
         """Compute position size using Kelly criterion for the given regime."""
         cfg = self.regime_config.get(regime, {})
         win_rate = cfg.get("win_rate", 0.5)
         ev = cfg.get("ev", 0.0)
 
-        # Estimate avg win/loss from EV and win rate
-        # EV = WR * avg_win - (1-WR) * avg_loss
-        # Using spread as proxy for avg_loss
-        avg_loss = self.spread * 2  # conservative estimate
-        if win_rate > 0:
-            avg_win = (ev + (1 - win_rate) * avg_loss) / win_rate
+        if self.mode == "crypto":
+            # For crypto: avg_loss based on fee rate + typical adverse move
+            avg_loss = close_price * self.taker_fee_rate * 2 + close_price * 0.005
+            if win_rate > 0 and avg_loss > 0:
+                avg_win = (ev + (1 - win_rate) * avg_loss) / win_rate
+            else:
+                avg_win = 0.0
         else:
-            avg_win = 0.0
+            avg_loss = self.spread * 2
+            if win_rate > 0:
+                avg_win = (ev + (1 - win_rate) * avg_loss) / win_rate
+            else:
+                avg_win = 0.0
 
         pos = compute_position_size(
             capital=self.capital,
             win_rate=win_rate,
             avg_win=max(avg_win, 0),
-            avg_loss=avg_loss,
-            kelly_divisor=4.0,        # Quarter-Kelly for safety
-            max_risk_fraction=0.02,   # 2% max risk per trade
+            avg_loss=max(avg_loss, 1e-8),
+            kelly_divisor=4.0,
+            max_risk_fraction=0.02,
         )
 
         return {
@@ -235,7 +265,7 @@ class SignalGenerator:
         # --- Volatility Guard ---
         # Initialize and fit on the full history available in df_features
         if "realized_vol_5" in df_features.columns:
-            vol_guard = VolatilityGuard(percentile=0.95)
+            vol_guard = VolatilityGuard(percentile=0.99, min_samples=1000)
             # Use all available data to estimate the percentile
             vol_guard.fit(df_features, vol_col="realized_vol_5")
             
@@ -308,7 +338,7 @@ class SignalGenerator:
         # Compute position size (only for actionable signals)
         position = {}
         if signal_type in ("BUY", "SELL"):
-            position = self._compute_position_size(current_regime)
+            position = self._compute_position_size(current_regime, close_price=close_price)
 
         risk_status = self.guardrails.get_status()
 
@@ -345,49 +375,48 @@ class SignalGenerator:
     def execute_trade(self, signal: dict) -> None:
         """
         Execute trade based on signal.
-        - SYNC execution (blocking).
-        - Check existing positions.
-        - Close opposite positions.
-        - Open new positions if signal != HOLD.
+
+        In crypto mode: paper trading only (log signal, no actual execution).
+        In FX mode: execute via Capital.com API.
         """
+        sig_type = signal["signal"]
+        if sig_type == "HOLD":
+            return
+
+        if self.mode == "crypto":
+            # Paper trading: log the signal but don't execute
+            size = signal.get("position", {}).get("lot_size", 0)
+            logger.info(
+                "PAPER TRADE: %s %.4f BTC @ $%.2f (risk=%.1f%%)",
+                sig_type, size, signal["close_price"],
+                signal.get("position", {}).get("risk_fraction", 0) * 100,
+            )
+            return
+
+        # FX mode: execute via Capital.com
         if not self._authenticated:
             self._ensure_authenticated()
 
         epic = self.client._cfg.epic
-        # 1. Get current positions
         try:
             positions = self.client.get_positions()
         except Exception as e:
             logger.error(f"Failed to fetch positions: {e}")
             return
 
-        # Find position for this epic
         current_pos = next((p for p in positions if p["market"]["epic"] == epic), None)
         current_dir = current_pos["direction"] if current_pos else None
         deal_id = current_pos["dealId"] if current_pos else None
 
-        sig_type = signal["signal"] # BUY, SELL, HOLD
-        
-        # Logic:
-        # If signal is HOLD -> Do nothing (Position remains)
-        # If signal matches current -> Do nothing (Hold) 
-        # If signal opposes current -> Close current, Open new
-        # If no current -> Open new
-
-        if sig_type == "HOLD":
-            return
-
-        # If we have a position in opposite direction, close it
         if current_pos and current_dir != sig_type:
             logger.info(f"Closing opposite {current_dir} position {deal_id}")
             try:
                 self.client.close_position(deal_id)
-                current_pos = None # Closed
+                current_pos = None
             except Exception as e:
                 logger.error(f"Failed to close position: {e}")
                 return
 
-        # If we have no position (or just closed it), open new one
         if not current_pos:
             size = signal.get("position", {}).get("lot_size", 0)
             if size <= 0:
@@ -396,12 +425,7 @@ class SignalGenerator:
 
             logger.info(f"Opening {sig_type} {size} {epic}")
             try:
-                self.client.place_order(
-                    epic=epic,
-                    direction=sig_type,
-                    size=size
-                    # stop_loss=... # TODO: Add SL logic from config if needed
-                )
+                self.client.place_order(epic=epic, direction=sig_type, size=size)
             except Exception as e:
                 logger.error(f"Failed to place order: {e}")
 
@@ -412,39 +436,52 @@ class SignalGenerator:
 
         latest_price = float(df["close"].iloc[-1])
         latest_ts = df.index[-1]
-        horizon_delta = timedelta(minutes=self.horizon)
+
+        # Crypto horizons are in hours, FX horizons are in minutes
+        if self.mode == "crypto":
+            horizon_delta = timedelta(hours=self.horizon)
+        else:
+            horizon_delta = timedelta(minutes=self.horizon)
 
         for sig in self.signal_log:
             if sig.get("outcome") is not None:
-                continue  # already evaluated
+                continue
             if sig["signal"] == "HOLD":
                 sig["outcome"] = "skip"
                 continue
 
             sig_ts = pd.Timestamp(sig["timestamp"])
             if (latest_ts - sig_ts) < horizon_delta:
-                continue  # not enough time elapsed
+                continue
 
             entry_price = sig["close_price"]
-            # Find the bar closest to horizon minutes after signal
             target_ts = sig_ts + horizon_delta
             future_bars = df.loc[df.index >= target_ts]
             if future_bars.empty:
-                # Use latest price if exact horizon bar not available yet
                 exit_price = latest_price
             else:
                 exit_price = float(future_bars["close"].iloc[0])
 
             if sig["signal"] == "BUY":
                 won = exit_price > entry_price
-            else:  # SELL
+            else:
                 won = exit_price < entry_price
 
             sig["outcome"] = "win" if won else "loss"
             sig["exit_price"] = exit_price
-            sig["pnl_pips"] = round((exit_price - entry_price) * 10000, 1)  # EURUSD pips
-            if sig["signal"] == "SELL":
-                sig["pnl_pips"] = -sig["pnl_pips"]
+
+            if self.mode == "crypto":
+                pnl_pct = (exit_price - entry_price) / entry_price * 100
+                if sig["signal"] == "SELL":
+                    pnl_pct = -pnl_pct
+                sig["pnl_pct"] = round(pnl_pct, 3)
+                sig["pnl_usd"] = round(pnl_pct / 100 * self.capital, 2)
+                pnl_label = f"{pnl_pct:+.3f}%"
+            else:
+                sig["pnl_pips"] = round((exit_price - entry_price) * 10000, 1)
+                if sig["signal"] == "SELL":
+                    sig["pnl_pips"] = -sig["pnl_pips"]
+                pnl_label = f"{sig['pnl_pips']:+.1f} pips"
 
             self.evaluated_count += 1
             if won:
@@ -453,8 +490,8 @@ class SignalGenerator:
                 self.loss_count += 1
 
             logger.info(
-                "Signal evaluated: %s @ %.5f -> %.5f = %s (%+.1f pips)",
-                sig["signal"], entry_price, exit_price, sig["outcome"], sig["pnl_pips"],
+                "Signal evaluated: %s @ %.2f -> %.2f = %s (%s)",
+                sig["signal"], entry_price, exit_price, sig["outcome"], pnl_label,
             )
 
     def get_win_rate_stats(self) -> dict:
@@ -466,7 +503,13 @@ class SignalGenerator:
         holds = total_signals - actionable
 
         win_rate = (self.win_count / self.evaluated_count * 100) if self.evaluated_count > 0 else 0.0
-        total_pips = sum(s.get("pnl_pips", 0) for s in self.signal_log if s.get("outcome") in ("win", "loss"))
+
+        if self.mode == "crypto":
+            total_pnl = sum(s.get("pnl_pct", 0) for s in self.signal_log if s.get("outcome") in ("win", "loss"))
+            pnl_label = f"{total_pnl:+.3f}%"
+        else:
+            total_pnl = sum(s.get("pnl_pips", 0) for s in self.signal_log if s.get("outcome") in ("win", "loss"))
+            pnl_label = f"{total_pnl:+.1f} pips"
 
         return {
             "total_signals": total_signals,
@@ -477,7 +520,7 @@ class SignalGenerator:
             "wins": self.win_count,
             "losses": self.loss_count,
             "win_rate": round(win_rate, 1),
-            "total_pips": round(total_pips, 1),
+            "total_pnl": pnl_label,
             "pending": actionable - self.evaluated_count,
         }
 
@@ -620,8 +663,8 @@ def main() -> None:
     parser.add_argument(
         "--interval",
         type=int,
-        default=60,
-        help="Seconds between signals (default: 60)",
+        default=None,
+        help="Seconds between signals (default: 3600 for crypto, 60 for FX)",
     )
     parser.add_argument(
         "--capital",
@@ -632,8 +675,8 @@ def main() -> None:
     parser.add_argument(
         "--horizon",
         type=int,
-        default=10,
-        help="Prediction horizon in minutes (default: 10)",
+        default=4,
+        help="Prediction horizon in bars (default: 4)",
     )
     args = parser.parse_args()
 
@@ -644,10 +687,13 @@ def main() -> None:
 
     gen = SignalGenerator(model_dir, capital=args.capital, horizon=args.horizon)
 
+    # Default interval: 1H for crypto, 1min for FX
+    interval = args.interval or (3600 if gen.mode == "crypto" else 60)
+
     if args.once:
         gen.run_once()
     else:
-        gen.run_loop(interval_seconds=args.interval)
+        gen.run_loop(interval_seconds=interval)
 
 
 if __name__ == "__main__":

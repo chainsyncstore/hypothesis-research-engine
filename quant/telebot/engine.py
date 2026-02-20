@@ -10,9 +10,10 @@ AUTH_RESET_THRESHOLD = 5
 
 
 class AsyncEngine:
-    def __init__(self, generator: SignalGenerator, on_signal=None):
+    def __init__(self, generator: SignalGenerator, on_signal=None, interval: int = 60):
         self.gen = generator
         self.on_signal = on_signal
+        self.interval = interval
         self.running = False
         self.task = None
 
@@ -36,7 +37,7 @@ class AsyncEngine:
         logger.info("Async Engine stopped.")
 
     async def _loop(self):
-        logger.info("Engine loop started. First signal in ~60s...")
+        logger.info("Engine loop started. Interval=%ds. First signal shortly...", self.interval)
         consecutive_errors = 0
         while self.running:
             try:
@@ -80,7 +81,7 @@ class AsyncEngine:
 
             # Normal interval sleep
             try:
-                await asyncio.sleep(60)
+                await asyncio.sleep(self.interval)
             except asyncio.CancelledError:
                 break
         logger.info("Engine loop exited.")
