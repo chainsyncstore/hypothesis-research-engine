@@ -30,3 +30,22 @@ Thumbs.db
 .ruff_cache/
 .mypy_cache/
 .pytest_cache/
+
+# Secrets & credentials
+*.pem
+*.key
+*.p12
+.env*
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Deploy artifacts
+deploy.tar.gz
+*.tar.gz
+
+# Debug/test scripts with credentials
+debug_credentials.py
+test_capital_auth.py
